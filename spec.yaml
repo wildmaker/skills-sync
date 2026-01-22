@@ -1,0 +1,38 @@
+spec_ref: <spec_ref>
+version: <x.y.z>
+change_type: doc | execution | behavioral | semantic
+breaking: false
+summary: "<short_summary>"
+updated_at: <YYYY-MM-DD>
+
+capability:
+  description: "<capability_boundary>"
+  non_goals:
+    - "<non_goal_1>"
+
+contract:
+  inputs:
+    - name: "<input_name>"
+      type: "<type>"
+      required: true
+      constraints: "<constraints>"
+  outputs:
+    - name: "<output_name>"
+      type: "<type>"
+      semantics: "<semantic_description>"
+
+rules:
+  - id: "<rule_id>"
+    description: "<rule_description>"
+    priority: high | medium | low
+
+workflows:
+  - step: 1
+    action: "<action>"
+    notes: "<notes>"
+
+tools:
+  allowed:
+    - "<tool_1>"
+  forbidden:
+    - "<tool_2>"
