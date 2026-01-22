@@ -1,0 +1,7 @@
+spec_id: assign-a-task-to-the-codex
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for assign-a-task-to-the-codex
+details:
+  - Initial spec for assign-a-task-to-the-codex from local SKILL.md

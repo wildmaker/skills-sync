@@ -1,0 +1,7 @@
+spec_id: git-merge-recent-pr
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for git-merge-recent-pr
+details:
+  - Initial spec for git-merge-recent-pr from local SKILL.md

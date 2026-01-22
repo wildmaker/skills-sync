@@ -1,0 +1,7 @@
+spec_id: prepare-for-test
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for prepare-for-test
+details:
+  - Initial spec for prepare-for-test from local SKILL.md

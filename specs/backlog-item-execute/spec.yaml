@@ -1,0 +1,7 @@
+spec_id: backlog-item-execute
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for backlog-item-execute
+details:
+  - Initial spec for backlog-item-execute from local SKILL.md

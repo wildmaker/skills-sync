@@ -1,0 +1,7 @@
+spec_id: git-status
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for git-status
+details:
+  - Initial spec for git-status from local SKILL.md

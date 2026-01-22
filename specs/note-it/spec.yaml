@@ -1,0 +1,7 @@
+spec_id: note-it
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for note-it
+details:
+  - Initial spec for note-it from local SKILL.md

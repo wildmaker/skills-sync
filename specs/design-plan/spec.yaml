@@ -1,0 +1,7 @@
+spec_id: design-plan
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for design-plan
+details:
+  - Initial spec for design-plan from local SKILL.md

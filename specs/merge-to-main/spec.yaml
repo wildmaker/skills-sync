@@ -1,0 +1,7 @@
+spec_id: merge-to-main
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for merge-to-main
+details:
+  - Initial spec for merge-to-main from local SKILL.md

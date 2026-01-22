@@ -1,0 +1,7 @@
+spec_id: fix-bug
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for fix-bug
+details:
+  - Initial spec for fix-bug from local SKILL.md

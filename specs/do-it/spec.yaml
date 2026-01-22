@@ -1,0 +1,7 @@
+spec_id: do-it
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for do-it
+details:
+  - Initial spec for do-it from local SKILL.md

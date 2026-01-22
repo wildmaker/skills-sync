@@ -1,0 +1,7 @@
+spec_id: ai-learn
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for ai-learn
+details:
+  - Initial spec for ai-learn from local SKILL.md

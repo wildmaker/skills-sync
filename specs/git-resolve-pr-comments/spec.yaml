@@ -1,0 +1,7 @@
+spec_id: git-resolve-pr-comments
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for git-resolve-pr-comments
+details:
+  - Initial spec for git-resolve-pr-comments from local SKILL.md

@@ -1,0 +1,7 @@
+spec_id: code-architecture-review
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for code-architecture-review
+details:
+  - Initial spec for code-architecture-review from local SKILL.md

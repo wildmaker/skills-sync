@@ -1,0 +1,7 @@
+spec_id: check-env
+version: 0.1.0
+change_type: doc
+breaking: false
+summary: Create spec for check-env
+details:
+  - Initial spec for check-env from local SKILL.md
