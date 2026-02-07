@@ -1,0 +1,216 @@
+{
+  "main": {
+    "id": "5eebd4fb3fc5e47b",
+    "type": "split",
+    "children": [
+      {
+        "id": "3f8e15b153004aa6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "eecdce93bf486648",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "codex/skills/epic-auto-build-v2/SKILL.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "SKILL"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "f6bb7cdf79e37275",
+    "type": "split",
+    "children": [
+      {
+        "id": "804adb33af7c724f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "786a1d630cced92a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "695c51274f510869",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "f8f297a1b0c785c2",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "70278003e9fc254e",
+    "type": "split",
+    "children": [
+      {
+        "id": "ef88dd9ae7007bd7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1d840a2a92208433",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "9ea33c3c757e8cb0",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "e0fd17385794e82d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "bed0f1cb4c3172a6",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "8a5bba5ed553e6e0",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "eecdce93bf486648",
+  "lastOpenFiles": [
+    "codex/skills/epic-auto-build-v2/protocol/EPIC-AUTO-BUILD-V2-CANVAS.md",
+    "codex/skills/epic-auto-build-v2/SKILL.md",
+    "codex/skills/auto-build-v2/SKILL.md",
+    "codex/skills/auto-build-v2",
+    "codex/skills/sdd-loop/SKILL.md",
+    "codex/skills/sdd-loop",
+    "codex/skills/engineering-sign-off/SKILL.md",
+    "codex/skills/engineering-sign-off",
+    "codex/skills/merge-to-main/SKILL.md",
+    "codex/skills/merge-to-main",
+    "codex/skills/epic-merge-to-main/SKILL.md",
+    "codex/skills/epic-merge-to-main",
+    "codex/skills/epic-engineering-sign-off/SKILL.md",
+    "codex/skills/epic-engineering-sign-off",
+    "codex/skills/epic-sdd-loop/SKILL.md",
+    "codex/skills/epic-sdd-loop",
+    "codex/skills/epic-auto-build-v2",
+    "epic-workflow.md",
+    "codex/skills/backlog-write-back/SKILL.md",
+    "codex/skills/backlog-write-back",
+    "codex/skills/epic-issue-triage/SKILL.md",
+    "codex/skills/spec-change-bootstrap/SKILL.md",
+    "codex/skills/spec-change-bootstrap",
+    "codex/skills/epic-fix-stabilization/SKILL.md",
+    "codex/skills/epic-stabilization/SKILL.md",
+    "codex/skills/standing-on-giants-preflight/SKILL.md",
+    "codex/skills/epic-review-demo/SKILL.md",
+    "codex/skills/xmind/SKILL.md",
+    "codex/skills/blueprint-compiler/SKILL.md",
+    "codex/skills/epic-breakdown/SKILL.md"
+  ]
+}

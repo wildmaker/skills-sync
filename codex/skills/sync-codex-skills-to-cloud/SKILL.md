@@ -1,11 +1,13 @@
 ---
 name: sync-codex-skills-to-cloud
-description: Migrate local non-symlink Codex skills from ~/.codex/skills into the skills-sync repo, replace them with symlinks, commit/push new skills, and sync to .cursor/skills. Use when asked to sync Codex skills to the cloud or to migrate local skills into the repo.
+description: Bidirectional sync between ~/.codex/skills and the skills-sync repo. Use when asked to migrate local skills into the repo or to link repo skills back into ~/.codex/skills.
 ---
 
 # Sync Codex Skills To Cloud
 
 ## Workflow
+
+### A. Local -> Repo (migrate new skills into repo)
 
 1. Run the migration script:
 
@@ -24,3 +26,15 @@ codex/skills/sync-codex-skills-to-cloud/scripts/migrate_local_skills.sh
 ```bash
 codex/skills/sync-with-cloud/scripts/ensure_cursor_skills_sync.sh
 ```
+
+### B. Repo -> Local (link repo skills into ~/.codex/skills)
+
+1. Run the linking script:
+
+```bash
+codex/skills/sync-codex-skills-to-cloud/scripts/link_repo_skills_to_codex.sh
+```
+
+- It creates symlinks in `~/.codex/skills` pointing to `codex/skills` in the repo.
+- It prints `LINKED: <name>` for each new link and `NO_CHANGES` when everything is already linked.
+- If it prints `CONFLICT:` for any name, stop and ask the user how to proceed before making changes.

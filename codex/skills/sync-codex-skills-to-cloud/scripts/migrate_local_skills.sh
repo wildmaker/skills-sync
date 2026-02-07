@@ -4,7 +4,7 @@ set -euo pipefail
 SOURCE_DIR="${CODEX_SKILLS_DIR:-$HOME/.codex/skills}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-REPO_ROOT="$(cd "$SKILL_DIR/../.." && pwd)"
+REPO_ROOT="$(cd "$SKILL_DIR/../../.." && pwd)"
 TARGET_DIR="$REPO_ROOT/codex/skills"
 
 if [[ ! -d "$SOURCE_DIR" ]]; then
@@ -17,8 +17,37 @@ if [[ ! -d "$TARGET_DIR" ]]; then
   exit 1
 fi
 
+has_conflict=0
+
+while IFS= read -r -d '' entry; do
+  name="$(basename "$entry")"
+  if [[ "$name" == .* ]]; then
+    continue
+  fi
+
+  # only handle directories
+  if [[ ! -d "$entry" ]]; then
+    continue
+  fi
+
+  # skip existing symlinks
+  if [[ -L "$entry" ]]; then
+    continue
+  fi
+
+  target="$TARGET_DIR/$name"
+  if [[ -e "$target" ]]; then
+    echo "CONFLICT: $name (repo already has $target)" >&2
+    has_conflict=1
+  fi
+done < <(find "$SOURCE_DIR" -mindepth 1 -maxdepth 1 -print0)
+
+if [[ "$has_conflict" -ne 0 ]]; then
+  echo "ERROR: conflicts detected; nothing was migrated." >&2
+  exit 2
+fi
+
 moved=()
-updated=()
 skipped=()
 
 while IFS= read -r -d '' entry; do
@@ -31,21 +60,12 @@ while IFS= read -r -d '' entry; do
     continue
   fi
 
-  if [[ ! -d "$entry" && ! -f "$entry" ]]; then
+  if [[ ! -d "$entry" ]]; then
     skipped+=("$name")
     continue
   fi
 
   target="$TARGET_DIR/$name"
-  if [[ -e "$target" ]]; then
-    rm -rf "$target"
-    mv "$entry" "$target"
-    ln -s "$target" "$entry"
-    updated+=("$name")
-    echo "UPDATED: $name"
-    continue
-  fi
-
   mv "$entry" "$target"
   ln -s "$target" "$entry"
   moved+=("$name")
@@ -56,6 +76,6 @@ if [[ ${#skipped[@]} -gt 0 ]]; then
   printf 'SKIPPED: %s\n' "${skipped[@]}" >&2
 fi
 
-if [[ ${#moved[@]} -eq 0 && ${#updated[@]} -eq 0 ]]; then
+if [[ ${#moved[@]} -eq 0 ]]; then
   echo "NO_CHANGES"
 fi

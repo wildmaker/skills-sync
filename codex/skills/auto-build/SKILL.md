@@ -31,6 +31,6 @@ version: 0.1.0
 
 ## Steps
 1. 调用 `auto-build-bootstrap`：确认设计文档与项目根目录，创建 `project/<document-name>` 分支，并明确后续 task PR base 规则。
-2. 调用 `auto-build-backlog-sync`：执行 `design-plan` -> `backlog-generate` -> `backlog-issue-sync`，产出可执行 backlog。
+2. 调用 `auto-build-backlog-sync`：执行 `blueprint-compiler` -> `backlog-generate` -> `backlog-issue-sync`，产出可执行 backlog。
 3. 进入执行循环：逐条调用 `auto-build-execute-item` 完成 backlog item（一次只做一个）。
 4. 全部完成后调用 `auto-build-final-review`：在 project 分支上输出最终复核报告，留待人工集中检查与测试（除非用户明确要求再合并到 main）。
