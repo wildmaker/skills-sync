@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pre-Merge Audit"
+  short_description: "Diff-based regression and base-drift audit before merge"
+  default_prompt: "Audit current branch vs main for regression risk and base drift, then provide merge safety verdict and remediation plan."
