@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Auto Device Loop"
+  short_description: "Auto build/deploy/run iOS on connected iPhone"
+  default_prompt: "Use $ios-auto-run-real-device to bootstrap repo detection, initialize local iOS config, and repeatedly call ios_run for autonomous real-device fix loops."
