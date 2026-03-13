@@ -70,3 +70,11 @@
 - `codex/skills/vercel-static-deploy`
 - `codex/skills/visualize-it`
 - `codex/skills/xmind`
+
+### 目录列表维护
+
+如需重新生成上面的目录列表，可在仓库根目录执行：
+
+```bash
+find codex/skills -mindepth 1 -maxdepth 1 -type d | sort | awk '{print "- `" $0 "`"}'
+```
