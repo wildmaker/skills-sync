@@ -137,7 +137,7 @@
   > 需检查会话记录确认执行了检查命令
 
 **PR 评审闭环：**
-- [ ] `👤 HUMAN` 调用了 `git-pr-review`
+- [ ] `👤 HUMAN` 调用了 `agent-review-loop`
   > 需检查会话记录确认调用了该 skill
 - [ ] `🤖 AUTO` PR 的 base 为 `epic/<epic-name>`（不是 `main`）
   > 检查方法：`gh pr list --json number,baseRefName,headRefName`
@@ -214,7 +214,7 @@
   > 需检查会话记录确认调用了该 skill
 - [ ] `👤 HUMAN` Fix 类问题走了 `epic-fix-stabilization`（仅修 bug/补测试/对齐既有 Spec，未扩展行为）
   > 需检查会话记录确认分流路径正确
-- [ ] `👤 HUMAN` Change 类问题回到了 `epic-sdd-loop`（将问题转为新的 Spec Change 交付）
+- [ ] `👤 HUMAN` Change 类问题回到了 `harness-feature`（将问题转为新的 Spec Change 交付）
   > 需检查会话记录确认分流路径正确
 
 ### 4.3 稳定化报告

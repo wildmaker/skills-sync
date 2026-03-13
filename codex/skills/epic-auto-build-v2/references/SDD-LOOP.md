@@ -12,11 +12,11 @@
 按照本地 CheckList 运行最少检查项（如 lint/test/build 等），本地通过后再提 PR。
 
 6. **PR 评审闭环（创建 PR -> 处理评论）：**
-运行 `git-pr-review`（inputs: `<base-branch>`, `<issue>`, `<spec-name>`；其中 `<base-branch>` 应为 `epic/<epic-name>`；在 PR 中引用对应的 Issue 和 OpenSpec 变更）。
+运行 `agent-review-loop`（inputs: `<base-branch>`, `<issue>`, `<spec-name>`；其中 `<base-branch>` 应为 `epic/<epic-name>`；在 PR 中引用对应的 Issue 和 OpenSpec 变更）。
 
 7. **远端 CI 全绿后合并：**
 在合并前必须确认：
-- PR 的 High/Medium 评论已闭环（含自动 reviewer，例如 gemini-code-assist；按 `git-resolve-pr-comments` 的轮询约束等待 review/comments 出现）
+- PR 的 High/Medium 评论已闭环（含自动 reviewer，例如 gemini-code-assist；按 `agent-review-loop-resolve-pr-comments` 的轮询约束等待 review/comments 出现）
 - PR 的远端 CI checks 全绿（CI is green）
 
 合并时的分支策略：
@@ -28,5 +28,5 @@
 8. **通过单独 PR 归档该 OpenSpec 变更：**
    - 从 `epic/<epic-name>` 创建归档分支（建议）：`chore/archive-<spec-name>`
    - 执行命令：`openspec archive <spec-name> --yes`
-   - 提交归档变更后，**同样必须**运行 `git-pr-review` 等待并处理 High/Medium 评论，再合并归档 PR（不要“提交→秒合并”）
+   - 提交归档变更后，**同样必须**运行 `agent-review-loop` 等待并处理 High/Medium 评论，再合并归档 PR（不要“提交→秒合并”）
 

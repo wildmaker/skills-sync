@@ -74,4 +74,4 @@ version: 0.2.1
   - `<id>`（change ID）
   - `<branch>`（实现分支）
   - `<issue>`（issue 编号/链接）
-- 说明：是否执行 `/openspec:apply <id>` 由调用方决定（例如 `epic-sdd-loop` 的下一步）
+- 说明：是否执行 `/openspec:apply <id>` 由调用方决定（例如 `harness-feature` 的下一步）

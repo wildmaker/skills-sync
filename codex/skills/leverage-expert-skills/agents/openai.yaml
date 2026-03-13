@@ -1,0 +1,4 @@
+interface:
+  display_name: "Expert Skill Orchestrator"
+  short_description: "Match local skills as experts and assign them into plans."
+  default_prompt: "Use $leverage-expert-skills to match local skills as experts and inject them into the execution plan before implementation."

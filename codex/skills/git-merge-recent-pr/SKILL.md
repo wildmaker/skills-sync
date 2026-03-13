@@ -14,7 +14,7 @@ version: 0.1.0
 
 ## Constraints
 - 有冲突时必须先解决再合并
-- **必须先处理 PR 中高优先级评论**：合并前调用 `git-resolve-pr-comments`
+- **必须先处理 PR 中高优先级评论**：合并前调用 `agent-review-loop-resolve-pr-comments`
 - **必须等 CI checks 全绿**：checks 未通过不得合并
 - **默认不得删除 head 分支**（不要使用 `gh pr merge --delete-branch`）
   - 特别是 `spec/*`：即使 repo 开启了“自动删除已合并分支”，也应在合并后检查并必要时恢复该分支（用于 Epic 完成后的统一清理）
@@ -23,13 +23,13 @@ version: 0.1.0
 - `gh`
 - `git`
 - `sleep`
-- `git-resolve-pr-comments`
+- `agent-review-loop-resolve-pr-comments`
 
 ## Steps
 1. 从近期对话或上下文中确定 PR ID。
    - 若无法确定：用 `gh pr list` 在当前 repo 内按“最近更新”列出候选 PR，并选择与当前工作分支/目标分支最匹配的一条。
 2. 合并前 gate（强制）：
-   - 运行 `git-resolve-pr-comments`，等待远程 review（含自动 reviewer）并处理 High/Medium 评论
+   - 运行 `agent-review-loop-resolve-pr-comments`，等待远程 review（含自动 reviewer）并处理 High/Medium 评论
    - 确认 PR 的 checks 全绿（CI is green）
    - 若 review 明确为 `CHANGES_REQUESTED` 且仍存在 High/Medium 未闭环：停止合并并输出阻塞项清单
 3. 检查是否存在冲突：

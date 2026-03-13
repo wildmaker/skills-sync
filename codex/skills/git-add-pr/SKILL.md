@@ -17,11 +17,11 @@ version: 0.0.0
 ## Allowed commands
 - `git-create-pr`
 - `sleep`
-- `git-resolve-pr-comments`
+- `agent-review-loop-resolve-pr-comments`
 - `git-merge-recent-pr`
 
 ## Steps
 1. 运行 `git-create-pr` 完成分支创建与 PR 提交。
-2. 等待 5 分钟后运行 `git-resolve-pr-comments`。
+2. 等待 5 分钟后运行 `agent-review-loop-resolve-pr-comments`。
 3. 运行 `git-merge-recent-pr` 完成合并。
 4. 输出已解决/未解决评论清单，并标注优先级。

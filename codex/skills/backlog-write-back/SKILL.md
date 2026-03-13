@@ -94,7 +94,7 @@ Epic branch URL: <repo_url>/tree/epic/<epic-name>
 - [ ] <id> — <description>
   - Triage: Change
   - Reason: <reason>
-  - Next: epic-sdd-loop
+  - Next: harness-feature
 ```
 
 ## Allowed commands

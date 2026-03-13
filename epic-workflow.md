@@ -6,10 +6,10 @@
 ### TL;DR｜推荐技能编排（5 阶段）
 
 - **Phase 1 Plan（拆分 & 初始化）**：`epic-breakdown`
-- **Phase 2 Implement（逐条交付）**：对每个 backlog item 调用 `epic-sdd-loop`
+- **Phase 2 Implement（逐条交付）**：对每个 backlog item 调用 `harness-feature`
 - **Phase 3 Review / Demo（价值验收）**：`epic-engineering-sign-off` → `epic-review-demo`
 - **Phase 4 Stabilization（Demo 后收敛）**：`epic-stabilization`
-  - 子流程：`epic-issue-triage` →（Fix）`epic-fix-stabilization` /（Change）`epic-sdd-loop`
+  - 子流程：`epic-issue-triage` →（Fix）`epic-fix-stabilization` /（Change）`harness-feature`
 - **Phase 5 Merge（合并回主分支）**：`epic-merge-to-main`
 
 可选一键编排：`epic-auto-build-v2`（仅在用户明确提出 auto build 时启用）
@@ -69,7 +69,7 @@ main
   - 建立并推送 `epic/<epic-name>` 分支
 - **退出条件**：Plan 可执行 + Backlog 可逐条交付 + Issues 对齐完成 + Epic 分支存在且正确
 
-#### Phase 2：Implement（`epic-sdd-loop`，一次只做一个 item）
+#### Phase 2：Implement（`harness-feature`，一次只做一个 item）
 
 对每个 backlog item：
 
@@ -100,7 +100,7 @@ Spec 要变 → Change（回到 Spec 驱动流程）
 ```
 
 - **Fix Path**：`epic-fix-stabilization`（只修 bug/补测试/对齐既有 Spec；禁止行为扩展）
-- **Change Path**：`epic-sdd-loop`（把问题转为新的 Spec Change 交付）
+- **Change Path**：`harness-feature`（把问题转为新的 Spec Change 交付）
 
 - **输出**：`epic_stabilization_report`（含 `ready_for_merge: true/false`）
 

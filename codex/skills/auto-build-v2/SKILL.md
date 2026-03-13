@@ -49,8 +49,8 @@ version: 0.6.1
   - `spec/*` 的 base 必须是对应 `epic/*`；禁止直接基于 `main`
   - 合并只能：`spec/*` → `epic/*`；Epic 完成后：`epic/*` → `main`
 - **PR 评审闭环强约束（防止“提交→秒合并”错过自动 review）**：
-  - 合并任何 PR（包括归档 OpenSpec change 的 PR）前，必须完成 `git-pr-review` → `git-resolve-pr-comments` 的 High/Medium 评论闭环
-  - 必须等待远程 reviewer（含自动 reviewer，例如 gemini-code-assist）产生 review/comments 后再做 merge 决策（按 `git-resolve-pr-comments` 的轮询约束执行）
+  - 合并任何 PR（包括归档 OpenSpec change 的 PR）前，必须完成 `agent-review-loop` 的 High/Medium 评论闭环
+  - 必须等待远程 reviewer（含自动 reviewer，例如 gemini-code-assist）产生 review/comments 后再做 merge 决策（按 `agent-review-loop-resolve-pr-comments` 的轮询约束执行）
 - **Spec 分支保留强约束（禁止自动删除）**：
   - 合并 `spec/*` PR 时**不得**使用 `--delete-branch`
   - 若 repo 设置导致 merged 后自动删除 `spec/*`：必须按 `git-merge-recent-pr` 的规则从 PR head SHA 恢复远端 `spec/*`（用于 Epic 完成后的统一清理）
@@ -78,7 +78,7 @@ version: 0.6.1
 - `backlog-issue-sync`
 - `backlog-write-back`
 - `epic-breakdown`
-- `epic-sdd-loop`
+- `harness-feature`
 - `epic-engineering-sign-off`
 - `epic-review-demo`
 - `epic-stabilization`
@@ -86,7 +86,7 @@ version: 0.6.1
 - `epic-fix-stabilization`
 - `openspec-init-change`
 - `backlog-item-execute`
-- `git-pr-review`
+- `agent-review-loop`
 - `git-merge-recent-pr`
 - `report-it-to-me`
 - `epic-merge-to-main`
@@ -133,7 +133,7 @@ version: 0.6.1
 - `<priority>`：若条目包含 `[P0|P1|P2|P3]`，解析并传入（用于 issue labels）；否则留空由下游默认。
 
 #### 2.3 执行并回写（循环）
-1. 调用 `epic-sdd-loop` 完成交付（一次只做一个）。
+1. 调用 `harness-feature` 完成交付（一次只做一个）。
 2. 合并完成后，调用 `backlog-write-back` 回写该条目的：
    - `status: Done`
    - `issue` / `pr` / `spec_change`（如 `OpenSpec/changes/<spec-name>`）等引用
@@ -160,7 +160,7 @@ version: 0.6.1
 
 1. 组织并完成集中测试（Integration / E2E / UAT / Exploratory），生成问题清单（即便为空也需明确“已测试且无问题”）
 2. 运行 `epic-stabilization`（仅在 demo 之后）
-   - 该流程会调度：`epic-issue-triage` →（Fix）`epic-fix-stabilization` /（Change）`epic-sdd-loop`
+   - 该流程会调度：`epic-issue-triage` →（Fix）`epic-fix-stabilization` /（Change）`harness-feature`
 3. 只有当 `ready_for_merge: true` 时，才进入合并阶段；否则停止并输出阻塞项/未闭环问题清单
 
 ### Phase 5: Merge to base（合并回主分支）
@@ -175,4 +175,3 @@ version: 0.6.1
    - 兜底：从 GitHub 已合并的 `spec/* → <epic-branch>` PR 列表中收集 `headRefName`
 2. 输出候选列表并询问用户一次（Yes/No）：是否批量删除这些**已合并**的远端 `spec/*` 分支？
 3. 仅当用户明确确认后才执行删除；否则跳过并保留全部分支。
-

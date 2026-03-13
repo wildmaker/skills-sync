@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent-First Repo Init"
+  short_description: "Bootstrap agent-first repo layout and governance files."
+  default_prompt: "Initialize this repository using an agent-first layout: short AGENTS.md, docs system-of-record tree, and bootstrap files for plans, quality, reliability, and security."

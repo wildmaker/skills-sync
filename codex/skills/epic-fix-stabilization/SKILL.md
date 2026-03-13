@@ -39,13 +39,13 @@ fix_stabilization_report:
   - 与既有 Spec 对齐（实现纠偏）
 - **禁止**：
   - 引入新功能
-  - 改变“应有行为”（若发现必须改行为：立即停止并将该问题升级为 Change，交回 Change Path：`epic-sdd-loop`）
+  - 改变“应有行为”（若发现必须改行为：立即停止并将该问题升级为 Change，交回 Change Path：`harness-feature`）
   - 混入重构/风格清理等非必要改动（除非是修复所必需的最小改动）
 - 每个修复类问题必须补上最小可回归验证（测试/断言/可复现脚本三选一，按 repo 约定）
 
 ## Allowed commands
-- `fix-bug`
-- `git-pr-review`
+- `harness-fix-bug`
+- `agent-review-loop`
 - `git`
 - `rg`
 - `openspec`
@@ -56,9 +56,9 @@ fix_stabilization_report:
 1. 从 `<epic-branch>` 创建并切换到 `<fix-branch>`
 2. 逐条处理 `<fix_issues>`（建议一次只推进一个，保持可回滚）
    - 复现问题 → 定位根因 → 实施最小修复 → 增补最小回归验证
-  - 若发现需要改变 Spec 才能“正确”：立即停止该条修复，将其重新分类为 Change（回到 Change Path：`epic-sdd-loop`）
+  - 若发现需要改变 Spec 才能“正确”：立即停止该条修复，将其重新分类为 Change（回到 Change Path：`harness-feature`）
 3. 完成实现，并在 `<fix-branch>` 上运行最小本地检查/回归（lint/test/build/e2e 按 repo 约定）
-4. 运行 `git-pr-review` 创建 PR 并处理评审闭环：`<fix-branch>` → `<epic-branch>`（base 必须是 `<epic-branch>`；PR 中引用 `<fix_issues>`；不需要 Spec Change），并确保：
+4. 运行 `agent-review-loop` 创建 PR 并处理评审闭环：`<fix-branch>` → `<epic-branch>`（base 必须是 `<epic-branch>`；PR 中引用 `<fix_issues>`；不需要 Spec Change），并确保：
    - PR 描述逐条列出已修复的 issues（含复现与验证方式）
    - CI 全绿后合并回 `<epic-branch>`
 5. 输出 `fix_stabilization_report`

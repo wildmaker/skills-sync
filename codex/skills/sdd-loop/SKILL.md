@@ -1,13 +1,13 @@
 ---
-name: epic-sdd-loop
-description: Epic 工作流的 SDD Loop：将根目录 `SDD-LOOP.md` 封装为可复用的单条 backlog item 交付流程（Issue ↔ Spec Change ↔ spec/* PR）。
+name: sdd-loop
+description: （Legacy alias）`harness-feature` 的旧触发器兼容入口：执行同一套单条 backlog item 的 SDD Loop 交付流程。
 version: 0.2.0
 ---
 
-# Skill: epic-sdd-loop
+# Skill: sdd-loop（legacy alias）
 
 ## Trigger
-@epic-sdd-loop
+@sdd-loop
 
 ## Source of truth
 - 根目录 `SDD-LOOP.md`
@@ -35,7 +35,7 @@ version: 0.2.0
 
 ## Allowed commands
 - `openspec-init-change`
-- `git-pr-review`
+- `agent-review-loop`
 - `openspec`
 - `git`
 - `rg`
@@ -46,7 +46,6 @@ version: 0.2.0
 3. 运行 `openspec-init-change` 初始化 Spec Change + Issue（inputs: `<spec-name>`, `<issue-title>`, `<branch>`；若 Issue 已存在则传入 `<issue>` 以避免重复创建）
 4. 应用变更：`/openspec:apply <spec-name>`
 5. 完成实现，并跑最小本地检查（lint/test/build 等，按仓库约定）
-6. 运行 `git-pr-review` 创建 PR 并处理评审闭环（base 必须是 `<epic-branch>`；PR 中引用 Issue 与 Spec Change）
+6. 运行 `agent-review-loop` 创建 PR 并处理评审闭环（base 必须是 `<epic-branch>`；PR 中引用 Issue 与 Spec Change）
 7. CI 全绿后合并 PR 回 `<epic-branch>`，并同步本地
 8. 通过单独 PR 归档变更：`openspec archive <spec-name> --yes`
-

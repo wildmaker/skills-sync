@@ -1,0 +1,4 @@
+interface:
+  display_name: "JVerification iOS Expert"
+  short_description: "极光 JVerification iOS 文档专家与查询助手"
+  default_prompt: "Use this skill to answer JVerification iOS integration questions with local references and refreshable official-doc snapshots."

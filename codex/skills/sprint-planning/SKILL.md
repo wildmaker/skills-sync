@@ -30,7 +30,7 @@ description: 在 Epic 工作流开始前执行 Sprint Planning：先调用 `mult
 2. 若 `Delivery Mode = Multi-Role Team`，执行结果 A：
    - 将需求拆分为多个可独立交付的 epic（每个 epic 必须有清晰边界与可单独验收目标）。
    - 为每个 epic 指定一个 owner agent。
-   - 每个 agent 按同一套后续流程执行：`epic-breakdown` -> `epic-sdd-loop` -> `epic-engineering-sign-off` -> `epic-review-demo` -> `epic-stabilization` -> `epic-merge-to-main`。
+   - 每个 agent 按同一套后续流程执行：`epic-breakdown` -> `harness-feature` -> `epic-engineering-sign-off` -> `epic-review-demo` -> `epic-stabilization` -> `epic-merge-to-main`。
 3. 若 `Delivery Mode = Single Owner`，执行结果 B：
    - 仅建立一个 epic。
    - 由单一 owner 按标准 Epic 流程串行执行后续阶段。
