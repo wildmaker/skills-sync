@@ -1,0 +1,142 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-03-16",
+  "owner": "ai-collaboration",
+  "description": "Repository-level MCP catalog for AI agents. Each entry documents what the MCP does, how to configure it, and where it is used.",
+  "mcps": [
+    {
+      "id": "linear",
+      "name": "Linear MCP",
+      "status": "planned",
+      "type": "remote",
+      "purpose": "Connect AI agents to Linear for issue/project workflows.",
+      "capabilities": [
+        "Read project/issue metadata",
+        "Create and update issues",
+        "Post progress comments"
+      ],
+      "config": {
+        "transport": "http",
+        "url": "https://mcp.linear.app/mcp",
+        "auth": {
+          "type": "api_key",
+          "env": [
+            "LINEAR_API_KEY"
+          ]
+        },
+        "clientExamples": {
+          "codex": "codex mcp add linear --url https://mcp.linear.app/mcp",
+          "claude": "claude mcp add --transport http linear https://mcp.linear.app/mcp"
+        }
+      },
+      "aiHints": [
+        "Prefer scoped queries to reduce token usage",
+        "Do not fetch broad payloads when a narrow query is enough"
+      ],
+      "usedBy": [
+        "./workflow/WORKFLOW.md",
+        "./skills/linear/SKILL.md",
+        "./.agents/skills/symphony-setup/SKILL.md"
+      ],
+      "doc": "./MCP/docs/linear.md"
+    },
+    {
+      "id": "notion",
+      "name": "Notion MCP",
+      "status": "planned",
+      "type": "remote",
+      "purpose": "Read Notion pages/databases as operational memory for AI prompts and workflows.",
+      "capabilities": [
+        "Discover Notion resources",
+        "Read page/database content",
+        "Inject reusable experience into AGENTS.md"
+      ],
+      "config": {
+        "transport": "stdio_or_http",
+        "endpoint": "TBD",
+        "auth": {
+          "type": "integration_token",
+          "env": [
+            "NOTION_API_KEY"
+          ]
+        },
+        "notes": [
+          "Keep Notion workspace and integration scopes minimal",
+          "Use read-only access unless write is required"
+        ]
+      },
+      "aiHints": [
+        "If Notion MCP is unavailable, fail fast and ask for setup",
+        "Summarize retrieved content before injecting into AGENTS.md"
+      ],
+      "usedBy": [
+        "./skills/inject-experience/SKILL.md"
+      ],
+      "doc": "./MCP/docs/notion.md"
+    },
+    {
+      "id": "xmind",
+      "name": "XMind MCP",
+      "status": "planned",
+      "type": "local_or_remote",
+      "purpose": "Create, read, and query XMind files for planning and reporting.",
+      "capabilities": [
+        "Generate .xmind from structured JSON",
+        "Search nodes by path/query",
+        "Extract planning structure for reports"
+      ],
+      "config": {
+        "transport": "stdio",
+        "command": "TBD",
+        "args": [],
+        "security": {
+          "allowedDirectories": [
+            "Repository working directory",
+            "User-designated export directory"
+          ]
+        }
+      },
+      "aiHints": [
+        "Write JSON plan first, then call create_xmind",
+        "Restrict file operations to allowed directories"
+      ],
+      "usedBy": [
+        "./skills/xmind/SKILL.md",
+        "./skills/report-it-to-me/SKILL.md"
+      ],
+      "doc": "./MCP/docs/xmind.md"
+    },
+    {
+      "id": "chatprd",
+      "name": "ChatPRD MCP",
+      "status": "planned",
+      "type": "remote",
+      "purpose": "Connect IDE/AI clients to ChatPRD for reading documents and creating PRDs.",
+      "capabilities": [
+        "Access ChatPRD documents in IDE",
+        "Create new PRD drafts",
+        "Use ChatPRD tools without leaving development workflow"
+      ],
+      "config": {
+        "transport": "http",
+        "url": "https://app.chatprd.ai/mcp",
+        "auth": {
+          "type": "account_session_or_api_key",
+          "env": [
+            "CHATPRD_API_KEY"
+          ]
+        },
+        "notes": [
+          "Integration is marked Pro Only in ChatPRD",
+          "Use client-specific MCP settings/deeplink from ChatPRD integrations page"
+        ]
+      },
+      "aiHints": [
+        "Use ChatPRD MCP when requirement context is in ChatPRD",
+        "Prefer concise retrieval before generating implementation plans"
+      ],
+      "usedBy": [],
+      "doc": "./MCP/docs/chatprd.md"
+    }
+  ]
+}

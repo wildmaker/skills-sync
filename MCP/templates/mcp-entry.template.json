@@ -1,0 +1,30 @@
+{
+  "id": "<mcp-id>",
+  "name": "<Display Name>",
+  "status": "planned",
+  "type": "remote|local|local_or_remote",
+  "purpose": "<One-line purpose for AI and developers>",
+  "capabilities": [
+    "<Capability 1>",
+    "<Capability 2>"
+  ],
+  "config": {
+    "transport": "http|stdio",
+    "url": "<optional>",
+    "command": "<optional>",
+    "args": [],
+    "auth": {
+      "type": "api_key|oauth|none",
+      "env": [
+        "<ENV_VAR_NAME>"
+      ]
+    }
+  },
+  "aiHints": [
+    "<Prompting or safety hint>"
+  ],
+  "usedBy": [
+    "<repo-relative path>"
+  ],
+  "doc": "./MCP/docs/<mcp-id>.md"
+}

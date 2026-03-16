@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ask ChatPRD"
+  short_description: "补问 PRD 缺口并产出优化/扩展建议"
+  default_prompt: "Use $tool-use-ask-chatprd to review my draft PRD, ask missing high-priority questions, then provide optimization suggestions and heuristic idea expansion."
