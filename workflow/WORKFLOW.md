@@ -30,6 +30,20 @@ hooks:
 agent:
   max_concurrent_agents: 10
   max_turns: 20
+agents:
+  codex_fast:
+    command: codex --config shell_environment_policy.inherit=all --config model_reasoning_effort=medium --model gpt-5.3-codex app-server
+    approval_policy: never
+    thread_sandbox: danger-full-access
+  cursor:
+    command: cursor-symphony-bridge
+    approval_policy: never
+    thread_sandbox: danger-full-access
+routing:
+  default_agent: codex
+  by_label:
+    fast-lane: codex_fast
+    use-cursor: cursor
 codex:
   command: codex --config shell_environment_policy.inherit=all --config model_reasoning_effort=xhigh --model gpt-5.3-codex app-server
   approval_policy: never
@@ -74,9 +88,19 @@ Instructions:
 
 Work only in the provided repository copy. Do not touch any other path.
 
-## Prerequisite: `linear_graphql` tool is available
+## Linear access
 
-The agent talks to Linear via the `linear_graphql` tool injected by Symphony's app-server. If it is not present, stop and ask the user to configure Linear. Do not use a Linear MCP server — it returns full JSON payloads that waste tokens. Use `linear_graphql` with narrowly scoped queries instead.
+The agent talks to Linear via one of two mechanisms (check which is available):
+
+1. **`linear_graphql` tool** (preferred) — if a built-in tool named `linear_graphql` is available, use it directly with narrowly scoped GraphQL queries.
+2. **`symphony-linear-cli` shell command** — if the tool is not available, use the CLI via `run_terminal_cmd`:
+   - Raw query: `symphony-linear-cli query '{ viewer { id name } }'`
+   - With variables: `symphony-linear-cli query '<mutation>' --vars '{"id":"...","state":"..."}'`
+   - Update issue state: `symphony-linear-cli update-issue <issue-uuid> --state "In Progress"`
+   - Create comment: `symphony-linear-cli comment <issue-uuid> "body text"` or `symphony-linear-cli comment <issue-uuid> --file workpad.md`
+   - Update comment: `symphony-linear-cli update-comment <comment-uuid> --file workpad.md`
+
+Do not stop or report blocked if `linear_graphql` tool is missing — use `symphony-linear-cli` instead. Do not use a Linear MCP server — it returns full JSON payloads that waste tokens.
 
 ## Default posture
 
@@ -150,7 +174,7 @@ A ticket is SDD when any of these are true: its description mentions `spec/`, `O
    - `Done` -> do nothing and shut down.
 4. Check whether a PR already exists for the current branch and whether it is closed.
    - If a branch PR exists and is `CLOSED` or `MERGED`, treat prior branch work as non-reusable for this run.
-   - Create a fresh branch from `origin/main` and restart execution flow as a new attempt.
+   - Create a fresh branch from the appropriate base (`origin/main`, or `<epic-branch>` for SDD tickets) and restart execution flow as a new attempt.
 5. For `Todo` tickets, do startup sequencing in this exact order:
    - `update_issue(..., state: "In Progress")`
    - find/create `## Codex Workpad` bootstrap comment
@@ -284,7 +308,7 @@ Use this only when completion is blocked by missing required tools or missing au
 8.  Attach PR URL to the issue (prefer attachment; use the workpad comment only if attachment is unavailable).
     - Ensure the GitHub PR has label `symphony` (add it if missing).
     - For SDD tickets: the PR body must reference the spec change path (`OpenSpec/changes/<spec-name>`).
-9.  Merge latest `origin/main` into branch, resolve conflicts, and rerun checks.
+9.  Merge latest base branch (`origin/main`, or `<epic-branch>` for SDD tickets) into the working branch, resolve conflicts, and rerun checks.
 10. Update the workpad comment with final checklist status and validation notes.
     - Mark completed plan/acceptance/validation checklist items as checked.
     - Add final handoff notes (commit + validation summary) in the same workpad comment.
@@ -335,7 +359,7 @@ After the implementation PR is merged for an SDD ticket:
 2. Re-read the full issue body and all human comments; explicitly identify what will be done differently this attempt.
 3. Close the existing PR tied to the issue.
 4. Remove the existing `## Codex Workpad` comment from the issue.
-5. Create a fresh branch from `origin/main`.
+5. Create a fresh branch from the appropriate base (`origin/main`, or `<epic-branch>` for SDD tickets).
 6. Start over from the normal kickoff flow:
    - If current issue state is `Todo`, move it to `In Progress`; otherwise keep the current state.
    - Create a new bootstrap `## Codex Workpad` comment.
@@ -355,7 +379,7 @@ After the implementation PR is merged for an SDD ticket:
 ## Guardrails
 
 - If the branch PR is already closed/merged, do not reuse that branch or prior implementation state for continuation.
-- For closed/merged branch PRs, create a new branch from `origin/main` and restart from reproduction/planning as if starting fresh.
+- For closed/merged branch PRs, create a new branch from the appropriate base (`origin/main`, or `<epic-branch>` for SDD tickets) and restart from reproduction/planning as if starting fresh.
 - If issue state is `Backlog`, do not modify it; wait for human to move to `Todo`.
 - Do not edit the issue body/description for planning or progress tracking.
 - Use exactly one persistent workpad comment (`## Codex Workpad`) per issue.
