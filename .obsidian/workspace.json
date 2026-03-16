@@ -178,6 +178,7 @@
   },
   "active": "0e6e52b75c9998d6",
   "lastOpenFiles": [
+    "skills/auto-build-v2/SKILL.md",
     "skills/tool-use-openspec-init-change/SKILL.md",
     "skills/tool-use-openspec-init-change",
     "skills/tool-use-openspec/SKILL.md",
@@ -212,7 +213,6 @@
     "skills/tool-use-git-status/SKILL.md",
     "skills/tool-use-git-rebase/SKILL.md",
     "skills/tool-use-git-pr-summarize/SKILL.md",
-    "skills/tool-use-git-merge-recent-pr/SKILL.md",
-    "skills/tool-use-git-create-pr/SKILL.md"
+    "skills/tool-use-git-merge-recent-pr/SKILL.md"
   ]
 }

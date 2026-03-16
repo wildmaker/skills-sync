@@ -93,11 +93,12 @@ Fix Stabilization   SDD LOOP
 - `epic-issue-triage`
 - `epic-fix-stabilization`
 - `harness-feature`
-- `openspec-init-change`
+- `tool-use-openspec-init-change`
 - `epic-engineering-sign-off`
 - `git`
 - `gh`
 - `rg`
+- `tool-use-openspec`
 - `openspec`
 
 ## Workflow（Master Control Flow）
@@ -133,8 +134,8 @@ triage_result:
 如果存在 `change_issues`，对每一个变更类问题：
 - 将该问题视为一个新的 backlog item（稳定化阶段的 Change 条目），先为其确定稳定的 `<spec-name>`（slug）
 - 调用子 Skill：`harness-feature`（本质与 `epic-auto-build-v2` 中“逐条实现 spec change issue”一致）
-  - 输入：`<epic-branch>=epic/<epic-name>`、`<spec-name>`、`<issue-title>`（从该问题描述生成；若 Issue 已存在则对齐/复用）
-  - 产出：Issue + OpenSpec change + `spec/*` 分支（base = `epic/<epic-name>`）+ PR（`spec/*` → `epic/*`）
+  - 输入：`<epic-branch>=epic/<epic-name>`、`<spec-name>`
+  - 产出：OpenSpec change + `spec/*` 分支（base = `epic/<epic-name>`）+ PR（`spec/*` → `epic/*`）
 - Spec 完成后必须合并回 `epic/<epic-name>`（`spec/*` → `epic/*`）
 
 ### Step 4：回归测试

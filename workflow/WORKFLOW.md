@@ -103,7 +103,7 @@ The agent talks to Linear via the `linear_graphql` tool injected by Symphony's a
 
 ## Related skills
 
-- `openspec`: create, validate, apply, and archive OpenSpec changes. Read during SDD spec initialization and post-merge archival.
+- `tool-use-openspec`: create, validate, apply, and archive OpenSpec changes. Read during SDD spec initialization and post-merge archival.
 - `harness-review`: bot detection heuristics, polling intervals, cross-reviewer dedup, and batch fix procedure. Read during multi-round review sweep rounds.
 - `linear`: interact with Linear.
 - `commit`: produce clean, logical commits during implementation.
@@ -189,7 +189,7 @@ A ticket is SDD when any of these are true: its description mentions `spec/`, `O
 10. **SDD bootstrap** (skip for non-SDD tickets):
     - Parse SDD context (see SDD context parsing above). Record `<epic-branch>`, `<spec-name>`, `<issue>` in the workpad under `**SDD Context**`.
     - Create branch `spec/<spec-name>` from `<epic-branch>` (or switch to it if it already exists).
-    - Read the `openspec` skill. Create the spec change: `openspec new change <spec-name>` (reuse if `OpenSpec/changes/<spec-name>` exists).
+    - Read the `tool-use-openspec` skill. Create the spec change: `openspec new change <spec-name>` (reuse if `OpenSpec/changes/<spec-name>` exists).
     - Write minimal content: `proposal.md` (motivation, scope, non-goals), `tasks.md` (subtasks), `specs/` (only deltas for this ticket).
     - **Validation gate (mandatory):** run `openspec validate <spec-name> --strict`. Fix until passing. Do not proceed to implementation without a green validation.
     - Apply the spec: `openspec apply <spec-name>`.
@@ -323,7 +323,7 @@ After the implementation PR is merged for an SDD ticket:
 
 1. Run the `pull` skill to sync local `<epic-branch>` with remote.
 2. Create archive branch: `chore/archive-<spec-name>` from `<epic-branch>`.
-3. Read the `openspec` skill. Run: `openspec archive <spec-name> --yes`.
+3. Read the `tool-use-openspec` skill. Run: `openspec archive <spec-name> --yes`.
 4. Commit the archive changes. Use the `push` skill to create an archive PR (`chore/archive-<spec-name>` → `<epic-branch>`). PR body must reference `OpenSpec/changes/<spec-name>`.
 5. Run a single-round review sweep on the archive PR (lightweight: collect signals, resolve High/Medium, confirm CI green).
 6. Merge the archive PR using the `land` skill.

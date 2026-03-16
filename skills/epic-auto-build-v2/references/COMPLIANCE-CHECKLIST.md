@@ -127,7 +127,7 @@
 - [ ] `🤖 AUTO` 从 `epic/<epic-name>` 创建了 `spec/<spec-name>` 分支
   > 检查方法：`git log --oneline spec/<spec-name>` 的首个 commit 基于 `epic/<epic-name>`
 - [ ] `🤖 AUTO` Spec Change 目录存在：`OpenSpec/changes/<spec-name>`
-- [ ] `👤 HUMAN` 调用了 `openspec-init-change` 初始化 OpenSpec 变更 + Issue
+- [ ] `👤 HUMAN` 调用了 `tool-use-openspec-init-change` 初始化并严格校验 OpenSpec 变更
   > 需检查会话记录确认调用了该 skill（目录存在可辅助判断，但不能确认是通过正确 skill 创建的）
 
 **实现与检查：**
