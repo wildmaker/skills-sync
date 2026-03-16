@@ -10,6 +10,12 @@ Use the community-maintained setup flow first, then harden it for custom skill n
 
 Goal: keep Symphony built-in capability names unchanged (`commit`, `push`, `pull`, `linear`, etc.) while allowing user-facing prompts and workflow guidance to prefer custom skill names (`tool-use-push`, `tool-use-commit`, ...).
 
+Default workflow template for this skill:
+
+1. Canonical source file: `workflow/WORKFLOW.md`.
+2. Bundled reference copy: `references/default-WORKFLOW.md`.
+3. When no explicit `workflow_source` override is provided, initialize from the bundled reference copy so the skill remains self-contained after install.
+
 Core constraints:
 
 1. Keep default `.agents/skills/*` (never delete wholesale).
@@ -36,11 +42,14 @@ set up Symphony for my repo.
 1. Confirm current directory is the target project root.
 2. Install the setup skill with `npx skills add odysseus0/symphony -s symphony-setup -y`.
 3. Decide custom skill source strategy: `repo_local` or `central_repo`.
-4. Create/update `symphony.skills.yaml` in the project root.
-5. Update `WORKFLOW.md` `after_create` to project clone + custom overlay (no destructive reset of skills).
-6. Update prompt layer (`AGENTS.md` + `Related skills`) to prioritize alias targets (for example `tool-use-push`).
-7. Validate with one real test ticket and confirm behavior evidence points to custom skill names.
-8. Push all setup changes to remote before starting Symphony workers.
+4. Decide workflow source strategy:
+   - default: initialize from the bundled default workflow template (`references/default-WORKFLOW.md`), which is maintained as a copy of `workflow/WORKFLOW.md`
+   - `workflow_source.type: path`: initialize from a user-specified repo-relative workflow file
+5. Create/update `symphony.skills.yaml` in the project root.
+6. Generate/update repo-root `WORKFLOW.md` from the selected workflow source, then apply `after_create` overlay changes (no destructive reset of skills).
+7. Update prompt layer (`AGENTS.md` + `Related skills`) to prioritize alias targets (for example `tool-use-push`).
+8. Validate with one real test ticket and confirm behavior evidence points to custom skill names.
+9. Push all setup changes to remote before starting Symphony workers.
 
 ## Required Mapping Defaults
 
@@ -55,7 +64,9 @@ If a capability has no alias, fall back to the default built-in skill name.
 
 ## Add `symphony.skills.yaml`
 
-Create this file in the user's repo root (adjust values to the actual org/repo):
+Create this file in the user's repo root (adjust values to the actual org/repo).
+
+Default case: omit `workflow_source` and use the bundled workflow template automatically:
 
 ```yaml
 version: 1
@@ -77,6 +88,31 @@ required_capabilities:
   - linear
 ```
 
+Override example: use a repo-relative workflow source file instead of the bundled default:
+
+```yaml
+version: 1
+strategy: overlay
+custom_source:
+  type: central_repo # central_repo or repo_local
+  repo: git@github.com:your-org/agent-skills.git
+  ref: main
+  subpath: .agents/skills
+workflow_source:
+  type: path
+  path: workflow/WORKFLOW.md
+aliases:
+  push: tool-use-push
+  pull: tool-use-pull
+  commit: tool-use-commit
+required_capabilities:
+  - commit
+  - push
+  - pull
+  - land
+  - linear
+```
+
 Field behavior:
 
 1. `strategy: overlay`: merge custom skills into `.agents/skills` without deleting defaults.
@@ -85,6 +121,12 @@ Field behavior:
 4. `custom_source.type`:
    - `repo_local`: use `.agents/skills-custom/*` from the project repo.
    - `central_repo`: clone the central skills repo and overlay from `subpath`.
+5. Default workflow source:
+   - When `workflow_source` is omitted, initialize from `references/default-WORKFLOW.md`.
+   - `references/default-WORKFLOW.md` must be kept in sync with the canonical source file `workflow/WORKFLOW.md`.
+6. `workflow_source.type`:
+   - `path`: read the workflow template from the repo-relative file in `workflow_source.path`, write the initialized output to repo-root `WORKFLOW.md`, then apply setup-specific changes there.
+7. `workflow_source.path` must exist in the target repo and must be treated as repo-relative, not absolute. Fail fast if the file is missing.
 
 ## First-Run Operator Guidance
 
@@ -142,7 +184,7 @@ which cursor-symphony-bridge && echo "cursor bridge OK"
 which symphony-linear-cli && echo "linear CLI OK"
 ```
 
-If the user wants Cursor as an agent backend, the WORKFLOW.md template already includes the multi-agent routing config. Tickets with the `use-cursor` label route to Cursor; all others go to Codex. No additional setup is needed beyond ensuring:
+If the user wants Cursor as an agent backend, the selected workflow template should include the multi-agent routing config. Tickets with the `use-cursor` label route to Cursor; all others go to Codex. If the chosen source template does not include this routing, add it during initialization. No additional setup is needed beyond ensuring:
 
 1. `agent` CLI is installed and authenticated.
 2. `cursor-symphony-bridge` and `symphony-linear-cli` are on PATH (done by `mix setup`).
@@ -166,7 +208,9 @@ Then run overlay-specific verification:
 2. Confirm worktree has both default and custom skills after `after_create`.
 3. Confirm `AGENTS.md` explicitly lists custom skill names (for example `tool-use-push`).
 4. Confirm `WORKFLOW.md` `Related skills` references alias targets first.
-5. Run one real ticket and confirm `push` stage behavior came from aliased skill (logs/evidence).
+5. If default workflow sourcing was used, confirm the generated repo-root `WORKFLOW.md` was initialized from `references/default-WORKFLOW.md`.
+6. If `workflow_source.type: path` was used, confirm the source file exists and the generated repo-root `WORKFLOW.md` was initialized from it before setup-specific edits.
+7. Run one real ticket and confirm `push` stage behavior came from aliased skill (logs/evidence).
 
 ## `WORKFLOW.md` `after_create` (Overlay Pattern)
 
@@ -226,13 +270,16 @@ Example:
 When running `symphony-setup`, enforce this order:
 
 1. Ask and confirm strategy (`project-local` recommended, or `central-repo`).
-2. Check source availability (`git clone --depth 1 <skills-source>` must succeed non-interactively).
-3. Generate/update:
+2. Default to the bundled workflow template at `references/default-WORKFLOW.md` (copied from canonical `workflow/WORKFLOW.md`) unless the user explicitly selects `workflow_source.type: path`.
+3. If `workflow_source.type: path` is selected, verify the path is repo-relative, exists in the target repo, and can be read before making any edits.
+4. Check source availability (`git clone --depth 1 <skills-source>` must succeed non-interactively).
+5. Generate/update:
    - `symphony.skills.yaml`
+   - repo-root `WORKFLOW.md` initialized from the selected workflow source
    - `WORKFLOW.md` `after_create`
    - `AGENTS.md` available skill list
    - `WORKFLOW.md` related skills names
-4. Validate with one real test ticket and collect evidence that aliased skill path was used.
+6. Validate with one real test ticket and collect evidence that aliased skill path was used.
 
 ## Compatibility and Rollback
 
@@ -256,8 +303,10 @@ When done, always provide:
 3. Env vars required and where they were documented.
 4. Linear workflow guidance (how to dispatch, rework, and pause tickets).
 5. Alias mapping used (`capability -> skill`) and evidence.
-6. Any manual steps still required by the user.
+6. Workflow source used (`default` bundled reference or `path`) and the exact source file consumed.
+7. Any manual steps still required by the user.
 
 ## Resource to Load
 
 - `references/tool-use-symphony-setup-checklist.md`
+- `references/default-WORKFLOW.md`

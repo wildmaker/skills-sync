@@ -19,8 +19,12 @@ set up Symphony for my repo.
 - [ ] Confirm command is run from target repo root.
 - [ ] Run `npx skills add odysseus0/symphony -s symphony-setup -y`.
 - [ ] Confirm `symphony-setup` skill is installed locally.
+- [ ] Decide workflow source mode: bundled default template or `workflow_source.type: path`.
+- [ ] If using the default mode, confirm it initializes from `references/default-WORKFLOW.md` (copy of canonical `workflow/WORKFLOW.md`).
+- [ ] If using `workflow_source.type: path`, verify the repo-relative source file exists and can be read before edits.
 - [ ] Execute: `set up Symphony for my repo.`
 - [ ] Review and validate generated repo changes.
+- [ ] Confirm repo-root `WORKFLOW.md` was initialized from the selected workflow source.
 - [ ] Run repo checks (for Elixir: `mix deps.get`, `mix compile`, `mix test`).
 - [ ] Verify Symphony can start without runtime errors.
 - [ ] Report diffs, env vars, Linear runbook, and remaining manual actions.
