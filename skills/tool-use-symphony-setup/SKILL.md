@@ -27,6 +27,10 @@ Rule: always fetch and follow the latest upstream setup skill from Symphony at r
 6. If local instructions conflict with upstream, upstream wins, except this post-setup workflow replacement is mandatory for this proxy.
 7. Keep this proxy minimal; do not add or maintain duplicated setup details here.
 
+Runtime consistency requirement for this proxy:
+
+- Follow upstream's global singleton strategy for Symphony itself (one `SYMPHONY_HOME` checkout reused by multiple runtimes), not per-repo local Symphony clones.
+
 ## Runtime Fetch Commands
 
 Use one of these in the target repo environment:
@@ -63,6 +67,25 @@ diff -u skills-sync/workflow/WORKFLOW.md <target-repo>/workflow/WORKFLOW.md
 ```
 
 `diff` should show no differences.
+
+## Multi-runtime isolation recommendations
+
+When operating multiple runtimes from one Symphony binary source, apply all of these:
+
+- Use a different `--port` per runtime.
+- Use a different `--logs-root` per runtime.
+- Use a different `workspace.root` per runtime.
+- Do not let multiple runtimes poll the same ticket pool. Split by `project_slug`, `assignee`, or state strategy to avoid contention.
+
+Reference example:
+
+```bash
+# runtime A
+~/.local/share/symphony/elixir/bin/symphony /repoA/WORKFLOW.md --port 4111 --logs-root ~/.cache/symphony/a --i-understand-that-this-will-be-running-without-the-usual-guardrails
+
+# runtime B
+~/.local/share/symphony/elixir/bin/symphony /repoB/WORKFLOW.md --port 4112 --logs-root ~/.cache/symphony/b --i-understand-that-this-will-be-running-without-the-usual-guardrails
+```
 
 ## Failure Handling
 
