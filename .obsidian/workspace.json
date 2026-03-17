@@ -178,6 +178,9 @@
   },
   "active": "0e6e52b75c9998d6",
   "lastOpenFiles": [
+    "skills/tool-use-symphony-setup/references/default-WORKFLOW.md",
+    "WORKFLOW_v2.md",
+    "WORKFLOW.md",
     "skills/auto-build-v2/SKILL.md",
     "skills/tool-use-openspec-init-change/SKILL.md",
     "skills/tool-use-openspec-init-change",
@@ -210,9 +213,6 @@
     "MCP/docs/chatprd.md",
     "workflow/meta-definitions/SDD-LOOP.md",
     "skills/harness-feature/SDD-LOOP.md",
-    "skills/tool-use-git-status/SKILL.md",
-    "skills/tool-use-git-rebase/SKILL.md",
-    "skills/tool-use-git-pr-summarize/SKILL.md",
-    "skills/tool-use-git-merge-recent-pr/SKILL.md"
+    "skills/tool-use-git-status/SKILL.md"
   ]
 }
