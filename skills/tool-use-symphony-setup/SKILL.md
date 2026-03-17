@@ -19,8 +19,13 @@ Rule: always fetch and follow the latest upstream setup skill from Symphony at r
 
 1. Fetch upstream skill text at runtime.
 2. Read and execute the upstream instructions as the primary authority.
-3. If local instructions conflict with upstream, upstream wins.
-4. Keep this proxy minimal; do not add or maintain duplicated setup details here.
+3. Run the upstream `symphony-setup` flow first to complete setup in the target repo.
+4. After setup completes, replace the installed target repo workflow file with the custom workflow from Skill Hub:
+   - Source (Skill Hub): `skills-sync/workflow/WORKFLOW.md`
+   - Target (installed repo): `workflow/WORKFLOW.md`
+5. Verify replacement succeeded by checking target file content matches the Skill Hub custom workflow.
+6. If local instructions conflict with upstream, upstream wins, except this post-setup workflow replacement is mandatory for this proxy.
+7. Keep this proxy minimal; do not add or maintain duplicated setup details here.
 
 ## Runtime Fetch Commands
 
@@ -37,6 +42,28 @@ gh api repos/wildmaker/symphony/contents/.agents/skills/symphony-setup/SKILL.md 
   -H "Accept: application/vnd.github.raw"
 ```
 
+## Post-Setup Workflow Replacement
+
+After upstream setup finishes, run replacement in the workspace that contains `skills-sync` and the target repo:
+
+```bash
+cp skills-sync/workflow/WORKFLOW.md <target-repo>/workflow/WORKFLOW.md
+```
+
+If you are already inside the target repo:
+
+```bash
+cp /path/to/skills-sync/workflow/WORKFLOW.md workflow/WORKFLOW.md
+```
+
+Recommended verification:
+
+```bash
+diff -u skills-sync/workflow/WORKFLOW.md <target-repo>/workflow/WORKFLOW.md
+```
+
+`diff` should show no differences.
+
 ## Failure Handling
 
 If upstream cannot be fetched (network/auth/rate limit):
@@ -44,3 +71,9 @@ If upstream cannot be fetched (network/auth/rate limit):
 1. Report the blocker and exact error.
 2. Stop and ask whether to retry or use a pinned commit URL as temporary fallback.
 3. Do not silently fall back to stale local copies.
+
+If post-setup workflow replacement fails:
+
+1. Report source path, target path, and exact error.
+2. Stop and ask whether to retry with corrected paths.
+3. Do not continue with default template as final state.
