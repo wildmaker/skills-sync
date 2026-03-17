@@ -22,7 +22,7 @@ Rule: always fetch and follow the latest upstream setup skill from Symphony at r
 3. Run the upstream `symphony-setup` flow first to complete setup in the target repo.
 4. After setup completes, replace the installed target repo workflow file with the custom workflow from Skill Hub:
    - Source (Skill Hub): `skills-sync/workflow/WORKFLOW.md`
-   - Target (installed repo): `workflow/WORKFLOW.md`
+   - Target (installed repo): `WORKFLOW.md` at repo root
 5. Verify replacement succeeded by checking target file content matches the Skill Hub custom workflow.
 6. If local instructions conflict with upstream, upstream wins, except this post-setup workflow replacement is mandatory for this proxy.
 7. Keep this proxy minimal; do not add or maintain duplicated setup details here.
@@ -51,19 +51,19 @@ gh api repos/wildmaker/symphony/contents/.agents/skills/symphony-setup/SKILL.md 
 After upstream setup finishes, run replacement in the workspace that contains `skills-sync` and the target repo:
 
 ```bash
-cp skills-sync/workflow/WORKFLOW.md <target-repo>/workflow/WORKFLOW.md
+cp skills-sync/workflow/WORKFLOW.md <target-repo>/WORKFLOW.md
 ```
 
 If you are already inside the target repo:
 
 ```bash
-cp /path/to/skills-sync/workflow/WORKFLOW.md workflow/WORKFLOW.md
+cp /path/to/skills-sync/workflow/WORKFLOW.md WORKFLOW.md
 ```
 
 Recommended verification:
 
 ```bash
-diff -u skills-sync/workflow/WORKFLOW.md <target-repo>/workflow/WORKFLOW.md
+diff -u skills-sync/workflow/WORKFLOW.md <target-repo>/WORKFLOW.md
 ```
 
 `diff` should show no differences.
