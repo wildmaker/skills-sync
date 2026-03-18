@@ -19,7 +19,41 @@ workspace:
   root: ~/code/symphony-workspaces
 hooks:
   after_create: |
+    set -euo pipefail
     git clone --depth 1 git@github.com:wildmaker/skills-sync.git .
+
+    # Self-contained skill bootstrap: fetch required custom skills from Skill Hub.
+    SKILL_HUB_REPO="https://github.com/wildmaker/skills-sync.git"
+    SKILL_HUB_REF="main"
+    REQUIRED_SKILLS=(
+      "tool-use-openspec"
+      "harness-review"
+      "tool-use-linear"
+      "tool-use-commit"
+      "tool-use-push"
+      "tool-use-pull"
+      "tool-use-land"
+    )
+
+    tmp_dir="$(mktemp -d)"
+    trap 'rm -rf "$tmp_dir"' EXIT
+    git clone --depth 1 --branch "$SKILL_HUB_REF" "$SKILL_HUB_REPO" "$tmp_dir/skill-hub"
+
+    mkdir -p .agents/skills
+    for skill in "${REQUIRED_SKILLS[@]}"; do
+      src="$tmp_dir/skill-hub/skills/$skill"
+      dst=".agents/skills/$skill"
+      if [ ! -d "$src" ]; then
+        echo "Missing required skill in Skill Hub: $src" >&2
+        exit 1
+      fi
+      rm -rf "$dst"
+      cp -R "$src" "$dst"
+    done
+
+    for skill in "${REQUIRED_SKILLS[@]}"; do
+      test -f ".agents/skills/$skill/SKILL.md"
+    done
   before_remove: |
     branch=$(git branch --show-current 2>/dev/null)
     if [ -n "$branch" ] && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
@@ -129,11 +163,11 @@ Do not stop or report blocked if `linear_graphql` tool is missing — use `symph
 
 - `tool-use-openspec`: create, validate, apply, and archive OpenSpec changes. Read during SDD spec initialization and post-merge archival.
 - `harness-review`: bot detection heuristics, polling intervals, cross-reviewer dedup, and batch fix procedure. Read during multi-round review sweep rounds.
-- `linear`: interact with Linear.
-- `commit`: produce clean, logical commits during implementation.
-- `push`: keep remote branch current and publish updates.
-- `pull`: keep branch updated with latest `origin/main` (or `<epic-branch>` for SDD tickets) before handoff.
-- `land`: when ticket reaches `Merging`, use the `land` skill, which includes the merge loop.
+- `tool-use-linear`: interact with Linear.
+- `tool-use-commit`: produce clean, logical commits during implementation.
+- `tool-use-push`: keep remote branch current and publish updates.
+- `tool-use-pull`: keep branch updated with latest `origin/main` (or `<epic-branch>` for SDD tickets) before handoff.
+- `tool-use-land`: when ticket reaches `Merging`, use the `tool-use-land` skill, which includes the merge loop.
 
 ## Status map
 
@@ -142,7 +176,7 @@ Do not stop or report blocked if `linear_graphql` tool is missing — use `symph
   - Special case: if a PR is already attached, treat as feedback/rework loop (run full PR feedback sweep, address or explicitly push back, revalidate, return to `Human Review`).
 - `In Progress` -> implementation actively underway.
 - `Human Review` -> PR is attached and validated; waiting on human approval.
-- `Merging` -> approved by human; execute the `land` skill flow (do not call `gh pr merge` directly). For SDD tickets, also archive the spec change after merge (see SDD merge + archive).
+- `Merging` -> approved by human; execute the `tool-use-land` skill flow (do not call `gh pr merge` directly). For SDD tickets, also archive the spec change after merge (see SDD merge + archive).
 - `Rework` -> reviewer requested changes; planning + implementation required.
 - `Done` -> terminal state; no further action required.
 
@@ -169,7 +203,7 @@ A ticket is SDD when any of these are true: its description mentions `spec/`, `O
      - If PR is already attached, start by reviewing all open PR comments and deciding required changes vs explicit pushback responses.
    - `In Progress` -> continue execution flow from current scratchpad comment.
    - `Human Review` -> wait and poll for decision/review updates.
-   - `Merging` -> on entry, use the `land` skill; do not call `gh pr merge` directly.
+   - `Merging` -> on entry, use the `tool-use-land` skill; do not call `gh pr merge` directly.
    - `Rework` -> run rework flow.
    - `Done` -> do nothing and shut down.
 4. Check whether a PR already exists for the current branch and whether it is closed.
@@ -205,8 +239,8 @@ A ticket is SDD when any of these are true: its description mentions `spec/`, `O
     - If the ticket description/comment context includes `Validation`, `Test Plan`, or `Testing` sections, copy those requirements into the workpad `Acceptance Criteria` and `Validation` sections as required checkboxes (no optional downgrade).
 7.  Run a principal-style self-review of the plan and refine it in the comment.
 8.  Before implementing, capture a concrete reproduction signal and record it in the workpad `Notes` section (command/output, screenshot, or deterministic UI behavior).
-9.  Run the `pull` skill to sync with latest `origin/main` (or `<epic-branch>` for SDD tickets) before any code edits, then record the pull/sync result in the workpad `Notes`.
-    - Include a `pull skill evidence` note with:
+9.  Run the `tool-use-pull` skill to sync with latest `origin/main` (or `<epic-branch>` for SDD tickets) before any code edits, then record the pull/sync result in the workpad `Notes`.
+    - Include a `tool-use-pull` skill evidence note with:
       - merge source(s),
       - result (`clean` or `conflicts resolved`),
       - resulting `HEAD` short SHA.
@@ -285,7 +319,7 @@ Use this only when completion is blocked by missing required tools or missing au
 
 ## Step 2: Execution phase (Todo -> In Progress -> Human Review)
 
-1.  Determine current repo state (`branch`, `git status`, `HEAD`) and verify the kickoff `pull` sync result is already recorded in the workpad before implementation continues.
+1.  Determine current repo state (`branch`, `git status`, `HEAD`) and verify the kickoff `tool-use-pull` sync result is already recorded in the workpad before implementation continues.
 2.  If current issue state is `Todo`, move it to `In Progress`; otherwise leave the current state unchanged.
 3.  Load the existing workpad comment and treat it as the active execution checklist.
     - Edit it liberally whenever reality changes (scope, risks, validation approach, discovered tasks).
@@ -302,7 +336,7 @@ Use this only when completion is blocked by missing required tools or missing au
     - You may make temporary local proof edits to validate assumptions (for example: tweak a local build input for `make`, or hardcode a UI account / response path) when this increases confidence.
     - Revert every temporary proof edit before commit/push.
     - Document these temporary proof steps and outcomes in the workpad `Validation`/`Notes` sections so reviewers can follow the evidence.
-    - If app-touching, run runtime validation and capture screenshots/recordings. Upload media to Linear using the `linear` skill's `fileUpload` flow and embed in the workpad comment.
+    - If app-touching, run runtime validation and capture screenshots/recordings. Upload media to Linear using the `tool-use-linear` skill's `fileUpload` flow and embed in the workpad comment.
 6.  Re-check all acceptance criteria and close any gaps.
 7.  Before every `git push` attempt, run the required validation for your scope and confirm it passes; if it fails, address issues and rerun until green, then commit and push changes.
 8.  Attach PR URL to the issue (prefer attachment; use the workpad comment only if attachment is unavailable).
@@ -335,7 +369,7 @@ Use this only when completion is blocked by missing required tools or missing au
 2. Poll for updates as needed, including GitHub PR review comments from humans and bots.
 3. If review feedback requires changes, move the issue to `Rework` and follow the rework flow.
 4. If approved, human moves the issue to `Merging`.
-5. When the issue is in `Merging`, use the `land` skill and run it in a loop until the PR is merged. Do not call `gh pr merge` directly.
+5. When the issue is in `Merging`, use the `tool-use-land` skill and run it in a loop until the PR is merged. Do not call `gh pr merge` directly.
    - **SDD merge constraint**: do not delete the `spec/*` branch after merge. If the repo auto-deletes merged branches, restore it: `git push origin <head-sha>:refs/heads/spec/<spec-name>`.
 6. After merge is complete:
    - For non-SDD tickets: move the issue to `Done`.
@@ -345,12 +379,12 @@ Use this only when completion is blocked by missing required tools or missing au
 
 After the implementation PR is merged for an SDD ticket:
 
-1. Run the `pull` skill to sync local `<epic-branch>` with remote.
+1. Run the `tool-use-pull` skill to sync local `<epic-branch>` with remote.
 2. Create archive branch: `chore/archive-<spec-name>` from `<epic-branch>`.
 3. Read the `tool-use-openspec` skill. Run: `openspec archive <spec-name> --yes`.
-4. Commit the archive changes. Use the `push` skill to create an archive PR (`chore/archive-<spec-name>` → `<epic-branch>`). PR body must reference `OpenSpec/changes/<spec-name>`.
+4. Commit the archive changes. Use the `tool-use-push` skill to create an archive PR (`chore/archive-<spec-name>` → `<epic-branch>`). PR body must reference `OpenSpec/changes/<spec-name>`.
 5. Run a single-round review sweep on the archive PR (lightweight: collect signals, resolve High/Medium, confirm CI green).
-6. Merge the archive PR using the `land` skill.
+6. Merge the archive PR using the `tool-use-land` skill.
 7. Move the issue to `Done`.
 
 ## Step 4: Rework handling

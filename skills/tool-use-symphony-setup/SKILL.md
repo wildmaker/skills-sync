@@ -20,12 +20,13 @@ Rule: always fetch and follow the latest upstream setup skill from Symphony at r
 1. Fetch upstream skill text at runtime.
 2. Read and execute the upstream instructions as the primary authority.
 3. Run the upstream `symphony-setup` flow first to complete setup in the target repo.
-4. After setup completes, replace the installed target repo workflow file with the custom workflow from Skill Hub:
+4. After setup completes, apply the custom skill override mapping from Skill Hub to the target repo `.agents/skills` directory.
+5. After skill overrides complete, replace the installed target repo workflow file with the custom workflow from Skill Hub:
    - Source (Skill Hub): `skills-sync/workflow/WORKFLOW.md`
    - Target (installed repo): `WORKFLOW.md` at repo root
-5. Verify replacement succeeded by checking target file content matches the Skill Hub custom workflow.
-6. If local instructions conflict with upstream, upstream wins, except this post-setup workflow replacement is mandatory for this proxy.
-7. Keep this proxy minimal; do not add or maintain duplicated setup details here.
+6. Verify skill overrides and workflow replacement succeeded.
+7. If local instructions conflict with upstream, upstream wins, except custom skill overrides and post-setup workflow replacement are mandatory for this proxy.
+8. Keep this proxy minimal; do not add or maintain duplicated setup details here.
 
 Runtime consistency requirement for this proxy:
 
@@ -68,6 +69,62 @@ diff -u skills-sync/workflow/WORKFLOW.md <target-repo>/WORKFLOW.md
 
 `diff` should show no differences.
 
+## Post-Setup Custom Skill Overrides (Mandatory)
+
+After upstream setup installs the official skills into the target repo, use this mapping to override official folders with your custom Skill Hub implementations.
+
+| Official target folder (`<target-repo>/.agents/skills/<name>`) | Skill Hub source folder (`skills-sync/skills/<name>`) |
+|---|---|
+| `commit` | `tool-use-commit` |
+| `push` | `tool-use-push` |
+| `pull` | `tool-use-pull` |
+| `land` | `tool-use-land` |
+
+Apply overrides from a workspace that contains both `skills-sync` and `<target-repo>`:
+
+```bash
+set -euo pipefail
+
+TARGET_REPO="<target-repo>"
+SKILL_HUB="skills-sync/skills"
+
+declare -a MAP=(
+  "commit:tool-use-commit"
+  "push:tool-use-push"
+  "pull:tool-use-pull"
+  "land:tool-use-land"
+)
+
+for pair in "${MAP[@]}"; do
+  official="${pair%%:*}"
+  custom="${pair##*:}"
+  src="$SKILL_HUB/$custom"
+  dst="$TARGET_REPO/.agents/skills/$official"
+
+  if [ ! -d "$src" ]; then
+    echo "Missing custom skill source: $src" >&2
+    exit 1
+  fi
+
+  rm -rf "$dst"
+  cp -R "$src" "$dst"
+done
+```
+
+Verification (all required):
+
+```bash
+test -f <target-repo>/.agents/skills/commit/SKILL.md
+test -f <target-repo>/.agents/skills/push/SKILL.md
+test -f <target-repo>/.agents/skills/pull/SKILL.md
+test -f <target-repo>/.agents/skills/land/SKILL.md
+
+rg -n '^name:\\s*tool-use-commit$' <target-repo>/.agents/skills/commit/SKILL.md
+rg -n '^name:\\s*tool-use-push$' <target-repo>/.agents/skills/push/SKILL.md
+rg -n '^name:\\s*tool-use-pull$' <target-repo>/.agents/skills/pull/SKILL.md
+rg -n '^name:\\s*tool-use-land$' <target-repo>/.agents/skills/land/SKILL.md
+```
+
 ## Multi-runtime isolation recommendations
 
 When operating multiple runtimes from one Symphony binary source, apply all of these:
@@ -100,3 +157,9 @@ If post-setup workflow replacement fails:
 1. Report source path, target path, and exact error.
 2. Stop and ask whether to retry with corrected paths.
 3. Do not continue with default template as final state.
+
+If custom skill override fails:
+
+1. Report mapping item, source path, target path, and exact error.
+2. Stop and ask whether to retry with corrected paths.
+3. Do not continue with mixed official/custom skills as final state.
