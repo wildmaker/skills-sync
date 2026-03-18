@@ -71,14 +71,14 @@ diff -u skills-sync/workflow/WORKFLOW.md <target-repo>/WORKFLOW.md
 
 ## Post-Setup Custom Skill Overrides (Mandatory)
 
-After upstream setup installs the official skills into the target repo, use this mapping to override official folders with your custom Skill Hub implementations.
+After upstream setup installs skills into the target repo, override by replacing full target folders with custom Skill Hub folders (folder name + contents together).
 
-| Official target folder (`<target-repo>/.agents/skills/<name>`) | Skill Hub source folder (`skills-sync/skills/<name>`) |
+| Target folder (`<target-repo>/.agents/skills/<name>`) | Skill Hub source folder (`skills-sync/skills/<name>`) |
 |---|---|
-| `commit` | `tool-use-commit` |
-| `push` | `tool-use-push` |
-| `pull` | `tool-use-pull` |
-| `land` | `tool-use-land` |
+| `tool-use-commit` | `tool-use-commit` |
+| `tool-use-push` | `tool-use-push` |
+| `tool-use-pull` | `tool-use-pull` |
+| `tool-use-land` | `tool-use-land` |
 
 Apply overrides from a workspace that contains both `skills-sync` and `<target-repo>`:
 
@@ -89,17 +89,17 @@ TARGET_REPO="<target-repo>"
 SKILL_HUB="skills-sync/skills"
 
 declare -a MAP=(
-  "commit:tool-use-commit"
-  "push:tool-use-push"
-  "pull:tool-use-pull"
-  "land:tool-use-land"
+  "tool-use-commit:tool-use-commit"
+  "tool-use-push:tool-use-push"
+  "tool-use-pull:tool-use-pull"
+  "tool-use-land:tool-use-land"
 )
 
 for pair in "${MAP[@]}"; do
-  official="${pair%%:*}"
+  target_name="${pair%%:*}"
   custom="${pair##*:}"
   src="$SKILL_HUB/$custom"
-  dst="$TARGET_REPO/.agents/skills/$official"
+  dst="$TARGET_REPO/.agents/skills/$target_name"
 
   if [ ! -d "$src" ]; then
     echo "Missing custom skill source: $src" >&2
@@ -109,20 +109,28 @@ for pair in "${MAP[@]}"; do
   rm -rf "$dst"
   cp -R "$src" "$dst"
 done
+
+# Remove legacy official folder names to avoid accidental fallback.
+rm -rf \
+  "$TARGET_REPO/.agents/skills/commit" \
+  "$TARGET_REPO/.agents/skills/push" \
+  "$TARGET_REPO/.agents/skills/pull" \
+  "$TARGET_REPO/.agents/skills/land"
 ```
 
 Verification (all required):
 
 ```bash
-test -f <target-repo>/.agents/skills/commit/SKILL.md
-test -f <target-repo>/.agents/skills/push/SKILL.md
-test -f <target-repo>/.agents/skills/pull/SKILL.md
-test -f <target-repo>/.agents/skills/land/SKILL.md
+test -f <target-repo>/.agents/skills/tool-use-commit/SKILL.md
+test -f <target-repo>/.agents/skills/tool-use-push/SKILL.md
+test -f <target-repo>/.agents/skills/tool-use-pull/SKILL.md
+test -f <target-repo>/.agents/skills/tool-use-land/SKILL.md
+test -f <target-repo>/.agents/skills/tool-use-land/land_watch.py
 
-rg -n '^name:\\s*tool-use-commit$' <target-repo>/.agents/skills/commit/SKILL.md
-rg -n '^name:\\s*tool-use-push$' <target-repo>/.agents/skills/push/SKILL.md
-rg -n '^name:\\s*tool-use-pull$' <target-repo>/.agents/skills/pull/SKILL.md
-rg -n '^name:\\s*tool-use-land$' <target-repo>/.agents/skills/land/SKILL.md
+rg -n '^name:\\s*tool-use-commit$' <target-repo>/.agents/skills/tool-use-commit/SKILL.md
+rg -n '^name:\\s*tool-use-push$' <target-repo>/.agents/skills/tool-use-push/SKILL.md
+rg -n '^name:\\s*tool-use-pull$' <target-repo>/.agents/skills/tool-use-pull/SKILL.md
+rg -n '^name:\\s*tool-use-land$' <target-repo>/.agents/skills/tool-use-land/SKILL.md
 ```
 
 ## Multi-runtime isolation recommendations
