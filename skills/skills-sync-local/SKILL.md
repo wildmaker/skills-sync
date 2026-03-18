@@ -1,5 +1,5 @@
 ---
-name: sync-local-skills
+name: skills-sync-local
 description: Bidirectional sync between ~/.codex/skills and this repo's skills, plus syncing repo skills to ~/.cursor/skills and ~/.claude/skills. Use when migrating local Codex skills into the repo, linking repo skills back into local clients, or updating Cursor/Claude skills from the repo.
 ---
 
@@ -12,7 +12,7 @@ description: Bidirectional sync between ~/.codex/skills and this repo's skills, 
 1. Run the migration script:
 
 ```bash
-skills/sync-local-skills/scripts/migrate_local_to_repo.sh
+skills/skills-sync-local/scripts/migrate_local_to_repo.sh
 ```
 
 - It moves non-symlink skill directories (excluding dot-prefixed directories) from `~/.codex/skills` into `skills` and replaces them with symlinks.
@@ -24,7 +24,7 @@ skills/sync-local-skills/scripts/migrate_local_to_repo.sh
 3. Sync Cursor skills:
 
 ```bash
-skills/sync-local-skills/scripts/ensure_cursor_skills_sync.sh
+skills/skills-sync-local/scripts/ensure_cursor_skills_sync.sh
 ```
 
 ### B. Repo -> Local (link repo skills into ~/.codex/skills)
@@ -32,7 +32,7 @@ skills/sync-local-skills/scripts/ensure_cursor_skills_sync.sh
 1. Run the linking script:
 
 ```bash
-skills/sync-local-skills/scripts/link_repo_to_codex.sh
+skills/skills-sync-local/scripts/link_repo_to_codex.sh
 ```
 
 - It creates symlinks in `~/.codex/skills` pointing to `skills` in the repo.
@@ -42,7 +42,7 @@ skills/sync-local-skills/scripts/link_repo_to_codex.sh
 2. Sync Cursor skills:
 
 ```bash
-skills/sync-local-skills/scripts/ensure_cursor_skills_sync.sh
+skills/skills-sync-local/scripts/ensure_cursor_skills_sync.sh
 ```
 
 ### C. Repo -> Cursor (sync repo skills into ~/.cursor/skills)
@@ -50,7 +50,7 @@ skills/sync-local-skills/scripts/ensure_cursor_skills_sync.sh
 Run the sync script any time the repo changes:
 
 ```bash
-skills/sync-local-skills/scripts/ensure_cursor_skills_sync.sh
+skills/skills-sync-local/scripts/ensure_cursor_skills_sync.sh
 ```
 
 - It mirrors `skills` into `~/.cursor/skills` using `rsync` and excludes dot-prefixed directories.
@@ -61,7 +61,7 @@ skills/sync-local-skills/scripts/ensure_cursor_skills_sync.sh
 1. Run the linking script:
 
 ```bash
-skills/sync-local-skills/scripts/link_repo_to_claude.sh
+skills/skills-sync-local/scripts/link_repo_to_claude.sh
 ```
 
 - It creates symlinks in `~/.claude/skills` pointing to `skills` in the repo.

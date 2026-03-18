@@ -1,5 +1,5 @@
 ---
-name: tool-use-skills-sh
+name: skills-sh
 description: Bootstrap and use the skills.sh ecosystem from terminal. Use when the user wants to discover, install, update, or remove skills via `npx skills`, or initialize local agent skill directories (Codex/Claude/Cursor).
 ---
 
@@ -12,7 +12,7 @@ Use this skill when the user wants to work with the `skills.sh` ecosystem.
 Run:
 
 ```bash
-skills/tool-use-skills-sh/scripts/bootstrap_skills_sh.sh
+skills/skills-sh/scripts/bootstrap_skills_sh.sh
 ```
 
 This script:
@@ -27,13 +27,13 @@ This script:
 ## 2) Install from a specific source
 
 ```bash
-skills/tool-use-skills-sh/scripts/bootstrap_skills_sh.sh <source> <agent>
+skills/skills-sh/scripts/bootstrap_skills_sh.sh <source> <agent>
 ```
 
 Example:
 
 ```bash
-skills/tool-use-skills-sh/scripts/bootstrap_skills_sh.sh vercel-labs/agent-skills codex
+skills/skills-sh/scripts/bootstrap_skills_sh.sh vercel-labs/agent-skills codex
 ```
 
 `<source>` supports GitHub shorthand (`owner/repo`) or repo URL.

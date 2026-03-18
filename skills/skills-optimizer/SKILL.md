@@ -1,15 +1,15 @@
 ---
-name: skill-optimizer
+name: skills-optimizer
 description: >
   审查并优化一个已有的 SKILL.md：对照反模式检查表逐项扫描，输出诊断报告与改写建议；
   反模式检查表随实践经验持续积累。
 version: 0.1.0
 ---
 
-# Skill: skill-optimizer
+# Skill: skills-optimizer
 
 ## Trigger
-@skill-optimizer `<skill-path>`
+@skills-optimizer `<skill-path>`
 
 ## What this skill does
 - 读取目标 skill 文件，逐项对照 `references/anti-patterns.md` 中的反模式检查表进行扫描。
@@ -29,7 +29,7 @@ version: 0.1.0
 ## Steps
 
 1. **加载检查表**
-   - 读取 `skills/skill-optimizer/references/anti-patterns.md`。
+   - 读取 `skills/skills-optimizer/references/anti-patterns.md`。
    - 解析所有反模式条目（ID、名称、检测方法、建议方案）。
 
 2. **读取目标 skill**

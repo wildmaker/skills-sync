@@ -1,10 +1,10 @@
 ---
-name: sync-repo-skills-to-target
+name: skills-sync-repo-to-target
 description: 将当前仓库的 `skills` 全量同步到用户指定目录；覆盖同名技能文件/目录，不删除目标目录中额外存在的其他文件。适用于发布本 repo 技能最新版本到任意用户技能仓库时使用。
 version: 0.0.0
 ---
 
-# sync-repo-skills-to-target
+# skills-sync-repo-to-target
 
 ## What this skill does
 - 将当前仓库 `skills` 同步到用户指定目录。

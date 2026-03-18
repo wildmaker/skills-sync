@@ -1,6 +1,6 @@
 # Skill Anti-Patterns Checklist
 
-> **用途**：`skill-optimizer` 的检测数据源。每个反模式有唯一 ID，便于诊断报告引用。
+> **用途**：`skills-optimizer` 的检测数据源。每个反模式有唯一 ID，便于诊断报告引用。
 > **维护方式**：发现新反模式后，在末尾追加新条目，保持 ID 递增。
 
 ---
