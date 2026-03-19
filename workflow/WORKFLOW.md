@@ -22,24 +22,35 @@ hooks:
     set -euo pipefail
     git clone --depth 1 git@github.com:wildmaker/skills-sync.git .
 
-    # Self-contained skill bootstrap: fetch required custom skills from Skill Hub.
+    parse_related_skills() {
+      local workflow_file="$1"
+      awk '
+        /^## Related skills/ { in_section=1; next }
+        /^## / && in_section { exit }
+        in_section { print }
+      ' "$workflow_file" \
+      | grep -oE '`[A-Za-z0-9._-]+`' \
+      | tr -d '`' \
+      | sort -u
+    }
+
+    # Self-contained skill bootstrap: derive required skills from workflow intent.
+    mapfile -t REQUIRED_SKILLS < <(parse_related_skills WORKFLOW.md)
+    if [ "${#REQUIRED_SKILLS[@]}" -eq 0 ]; then
+      echo "Failed to parse required skills from WORKFLOW.md -> ## Related skills" >&2
+      exit 1
+    fi
+
+    # Fetch required custom skills from Skill Hub.
     SKILL_HUB_REPO="https://github.com/wildmaker/skills-sync.git"
     SKILL_HUB_REF="main"
-    REQUIRED_SKILLS=(
-      "tool-use-openspec"
-      "harness-review"
-      "tool-use-linear"
-      "tool-use-commit"
-      "tool-use-push"
-      "tool-use-pull"
-      "tool-use-land"
-    )
 
     tmp_dir="$(mktemp -d)"
     trap 'rm -rf "$tmp_dir"' EXIT
     git clone --depth 1 --branch "$SKILL_HUB_REF" "$SKILL_HUB_REPO" "$tmp_dir/skill-hub"
+    SKILL_HUB_COMMIT="$(git -C "$tmp_dir/skill-hub" rev-parse HEAD)"
 
-    mkdir -p .agents/skills
+    mkdir -p .agents/skills .agents
     for skill in "${REQUIRED_SKILLS[@]}"; do
       src="$tmp_dir/skill-hub/skills/$skill"
       dst=".agents/skills/$skill"
@@ -54,6 +65,51 @@ hooks:
     for skill in "${REQUIRED_SKILLS[@]}"; do
       test -f ".agents/skills/$skill/SKILL.md"
     done
+
+    manifest=".agents/skills.manifest.yaml"
+    lock=".agents/skills.lock"
+
+    {
+      echo "version: 1"
+      echo "required_skills:"
+      for skill in "${REQUIRED_SKILLS[@]}"; do
+        echo "  - $skill"
+      done
+      echo "source:"
+      echo "  mode: remote"
+      echo "  repo: $SKILL_HUB_REPO"
+      echo "  ref: $SKILL_HUB_REF"
+      echo "version_policy:"
+      echo "  strategy: pinned_commit"
+    } > "$manifest"
+
+    tmp_lock="$(mktemp)"
+    {
+      echo "version: 1"
+      echo "skill_hub:"
+      echo "  repo: $SKILL_HUB_REPO"
+      echo "  ref: $SKILL_HUB_REF"
+      echo "  commit: $SKILL_HUB_COMMIT"
+      echo "skills:"
+      for skill in "${REQUIRED_SKILLS[@]}"; do
+        echo "  - name: $skill"
+        echo "    commit: $SKILL_HUB_COMMIT"
+      done
+    } > "$tmp_lock"
+    mv "$tmp_lock" "$lock"
+
+    if [ ! -x scripts/skills-doctor.sh ]; then
+      echo "Missing skills doctor: scripts/skills-doctor.sh" >&2
+      exit 1
+    fi
+    scripts/skills-doctor.sh --strict
+  before_run: |
+    set -euo pipefail
+    if [ ! -x scripts/skills-doctor.sh ]; then
+      echo "Missing skills doctor: scripts/skills-doctor.sh" >&2
+      exit 1
+    fi
+    scripts/skills-doctor.sh --strict
   before_remove: |
     branch=$(git branch --show-current 2>/dev/null)
     if [ -n "$branch" ] && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
