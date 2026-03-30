@@ -16,8 +16,23 @@
               "icon": "lucide-file",
               "title": "新标签页"
             }
+          },
+          {
+            "id": "c6caff4c0d4bad5b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "README.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -74,7 +89,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200
   },
   "right": {
     "id": "70278003e9fc254e",
@@ -176,8 +191,10 @@
       "bases:新建数据库": false
     }
   },
-  "active": "0e6e52b75c9998d6",
+  "active": "c6caff4c0d4bad5b",
   "lastOpenFiles": [
+    "未命名.md",
+    "README.md",
     "skills/tool-use-symphony-setup/references/default-WORKFLOW.md",
     "WORKFLOW_v2.md",
     "WORKFLOW.md",
@@ -211,8 +228,6 @@
     "docs/TODO-Phase1-MVP.md",
     "docs/Harness 框架.md",
     "MCP/docs/chatprd.md",
-    "workflow/meta-definitions/SDD-LOOP.md",
-    "skills/harness-feature/SDD-LOOP.md",
-    "skills/tool-use-git-status/SKILL.md"
+    "workflow/meta-definitions/SDD-LOOP.md"
   ]
 }
