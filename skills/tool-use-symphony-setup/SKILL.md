@@ -10,6 +10,8 @@ This skill is a thin proxy.
 
 Rule: always fetch and follow the latest upstream setup skill from Symphony at runtime, instead of using local copied setup steps.
 
+Local override for this repo: Linear initialization is mandatory. Setup must resolve a Linear project whose name exactly matches the target repo name; if none exists, create it, then use that project's `slugId` as `tracker.project_slug`. All later repo tasks should be managed under that project unless the user explicitly opts out.
+
 ## Upstream Source of Truth
 
 - Web: `https://github.com/wildmaker/symphony/blob/main/.agents/skills/symphony-setup/SKILL.md`
@@ -19,39 +21,44 @@ Rule: always fetch and follow the latest upstream setup skill from Symphony at r
 
 1. Fetch upstream skill text at runtime.
 2. Read and execute the upstream instructions as the primary authority.
-3. Run the upstream `symphony-setup` flow first to complete setup in the target repo.
-4. Parse `WORKFLOW.md` and extract required skills from `## Related skills` (this is intent source-of-truth).
-5. Resolve the Skill Hub source with this priority:
+3. Resolve the target repo name from git (`git rev-parse --show-toplevel` or origin remote name).
+4. Query Linear for an exact-name project match; if absent, create a new project with that repo name and the active team.
+5. Patch the installed `WORKFLOW.md` so `tracker.project_slug` points at the resolved or newly created Linear project.
+6. Treat that Linear project as the default container for all future repo tickets managed by Symphony.
+7. Run the upstream `symphony-setup` flow first to complete setup in the target repo.
+8. Parse `WORKFLOW.md` and extract required skills from `## Related skills` (this is intent source-of-truth).
+9. Resolve the Skill Hub source with this priority:
    - Preferred: remote `skills-sync` repo (pin with `SKILL_HUB_REF`, default `main`)
    - Optional: local override via `SKILL_HUB_ROOT` (only when explicitly provided and valid)
    - If preferred source fails, report exact error and ask whether to retry with another source
-6. In setup phase (not waiting for runtime hooks), sync all required skills into `<target-repo>/.agents/skills`.
-7. Ensure each synced skill includes `SKILL.md` and bundled scripts/assets.
-8. Create or update `<target-repo>/.agents/skills.manifest.yaml`:
+10. In setup phase (not waiting for runtime hooks), sync all required skills into `<target-repo>/.agents/skills`.
+11. Ensure each synced skill includes `SKILL.md` and bundled scripts/assets.
+12. Create or update `<target-repo>/.agents/skills.manifest.yaml`:
    - required skills
    - source metadata
    - version strategy (recommended: pinned commit/tag)
-9. Create or update `<target-repo>/.agents/skills.lock` with actual resolved revision per skill.
+13. Create or update `<target-repo>/.agents/skills.lock` with actual resolved revision per skill.
    - If lock already exists, update it in place; do not fail because the file exists.
-10. After skill sync completes, replace the installed target repo workflow file with the custom workflow from Skill Hub:
+14. After skill sync completes, replace the installed target repo workflow file with the custom workflow from Skill Hub:
    - Source (Skill Hub): `<SKILL_HUB_ROOT>/workflow/WORKFLOW.md`
    - Target (installed repo): `WORKFLOW.md` at repo root
-11. Ensure `WORKFLOW.md` hooks run skills doctor:
+15. Ensure `WORKFLOW.md` hooks run skills doctor:
    - `after_create`: run doctor once after bootstrap
    - `before_run`: run doctor and fail-fast on errors
-12. Ensure CI includes strict doctor check so missing skills are detectable even when hooks are not triggered.
-13. Commit these setup artifacts in target repo:
+16. Ensure CI includes strict doctor check so missing skills are detectable even when hooks are not triggered.
+17. Commit these setup artifacts in target repo:
    - `.agents/skills/*`
    - `.agents/skills.manifest.yaml`
    - `.agents/skills.lock`
    - `scripts/skills-doctor.sh`
    - `WORKFLOW.md` hook updates and CI workflow changes
-14. If local instructions conflict with upstream, upstream wins, except setup-time skill sync + manifest/lock + doctor + workflow replacement are mandatory for this proxy.
-15. Keep this proxy minimal; do not add or maintain duplicated setup details here.
+18. If local instructions conflict with upstream, upstream wins, except repo-name Linear project initialization + `tracker.project_slug` patching + setup-time skill sync + manifest/lock + doctor + workflow replacement are mandatory for this proxy.
+19. Keep this proxy minimal; do not add or maintain duplicated setup details here.
 
 Runtime consistency requirement for this proxy:
 
 - Follow upstream's global singleton strategy for Symphony itself (one `SYMPHONY_HOME` checkout reused by multiple runtimes), not per-repo local Symphony clones.
+- Start Symphony from `"$SYMPHONY_HOME/elixir"` with `mise exec -- ./bin/symphony ...`; do not invoke `"$SYMPHONY_HOME/elixir/bin/symphony"` directly because `escript` resolution may fail outside the `mise` runtime environment.
 
 ## Runtime Fetch Commands
 

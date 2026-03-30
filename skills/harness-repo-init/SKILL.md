@@ -1,7 +1,7 @@
 ---
 name: harness-repo-init
 description: 初始化一个新仓库以便使用 epic-auto-build-v2 全流程自动化开发：先从中央仓库同步 skills 到目标仓库 `.agents/skills/`，再依次调用 harness-repo-init-docs-skeleton、harness-repo-init-openspec-init、tool-use-symphony-setup 与 harness-repo-init-bugbot-rules-init，最后把 Autonomous 连续执行约束写入目标仓库 Agent.md 的执行清单。
-version: 0.3.1
+version: 0.3.2
 ---
 
 # Skill: harness-repo-init
@@ -24,8 +24,8 @@ version: 0.3.1
 
 ## Hard constraints
 - 严禁跳步执行或并行执行多个子 skill；必须严格按 `## Steps` 序号推进。
-- 中央仓库地址必须取自本仓库 `origin` remote（本 repo 的 remote 即中央仓库地址）。
-- `skills` 同步必须幂等：重复执行后，`<repo>/.agents/skills/` 内容与中央仓库 `skills/` 保持一致，不得重复嵌套目录。
+- 中央仓库地址默认取自本仓库 `origin` remote；若 clone 后缺失 `skills/` 目录，允许回退到 `https://github.com/wildmaker/skills-sync.git` 作为 skills 源。
+- `skills` 同步必须幂等：重复执行后，`<repo>/.agents/skills/` 内容与最终生效的 skills 源保持一致，不得重复嵌套目录。
 - `Agent.md` 更新必须幂等：同一约束不得重复追加。
 - 若 `Agent.md` 不存在，必须创建并写入“执行清单”段落后再追加约束。
 - 未经用户明确要求，不修改 `CLAUDE.md`、`AGENTS.md` 或其他流程文件。
@@ -63,6 +63,11 @@ version: 0.3.1
   - `CENTRAL_REPO_URL=$(git remote get-url origin)`
 - 使用临时目录 clone 中央仓库（例如 `<repo>/.agents/.skills-central-tmp`）：
   - `git clone --depth 1 "$CENTRAL_REPO_URL" "<repo>/.agents/.skills-central-tmp"`
+- 若 clone 后不存在 `<repo>/.agents/.skills-central-tmp/skills/`：
+  - 清理临时目录：`rm -rf "<repo>/.agents/.skills-central-tmp"`
+  - 回退到固定 skills 源：`FALLBACK_SKILLS_REPO_URL="https://github.com/wildmaker/skills-sync.git"`
+  - 重新 clone：`git clone --depth 1 "$FALLBACK_SKILLS_REPO_URL" "<repo>/.agents/.skills-central-tmp"`
+- 若回退后仍不存在 `skills/` 目录：标记为 `blocked` 并停止。
 - 确保目标目录存在并同步：
   - `mkdir -p "<repo>/.agents/skills"`
   - `rsync -a --delete "<repo>/.agents/.skills-central-tmp/skills/" "<repo>/.agents/skills/"`
@@ -126,7 +131,7 @@ version: 0.3.1
   - `路由判定后立即进入对应后续阶段并持续推进，直到遇到真正阻塞（按 Blocked 规则处理并继续下一项）。`
 
 ## Exit criteria
-- 中央仓库 `skills/` 已成功同步到 `<repo>/.agents/skills/`（目录结构正确且无 `skills/skills` 双层嵌套）。
+- `skills/` 已成功从可用源（`origin` 或 fallback `skills-sync`）同步到 `<repo>/.agents/skills/`（目录结构正确且无 `skills/skills` 双层嵌套）。
 - `harness-repo-init-docs-skeleton` 已完成文档骨架初始化（不覆盖既有内容）。
 - `harness-repo-init-openspec-init` 已在目标仓库执行完成。
 - `tool-use-symphony-setup` 已在目标仓库执行完成，且 `WORKFLOW.md` 已替换为 Skill Hub 自定义版本。

@@ -168,6 +168,46 @@ mutation($input: IssueRelationCreateInput!) {
 
 Input: `issueId`, `relatedIssueId`, `type` (`blocks` or `related`).
 
+## Repo project bootstrap
+
+When a workflow needs a Linear project for a repository, use the repository name
+as the canonical project name:
+
+1. Query projects by exact `name`.
+2. Reuse the exact active match if it exists.
+3. Otherwise create a new project with that repo name and the intended team.
+4. Persist the returned `slugId` anywhere workflow config expects a project slug.
+5. Create follow-up issues under that same project by default.
+
+Lookup:
+
+```graphql
+query($name: String!) {
+  projects(filter: { name: { eq: $name } }) {
+    nodes {
+      id
+      name
+      slugId
+      state
+      teams { nodes { id key name } }
+    }
+  }
+}
+```
+
+Create:
+
+```graphql
+mutation($input: ProjectCreateInput!) {
+  projectCreate(input: $input) {
+    success
+    project { id name slugId }
+  }
+}
+```
+
+Minimum create input: `name`, `teamIds`.
+
 ## Rules
 
 - **No introspection.** Never use `__type` or `__schema` queries. They return

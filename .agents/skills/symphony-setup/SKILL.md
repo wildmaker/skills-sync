@@ -45,15 +45,67 @@ Auto-detect as much as possible. Only ask the user to confirm or fill gaps.
 
 - **Repo path** — `git rev-parse --show-toplevel` from the current directory. If not in a git repo, ask.
 - **Clone URL** — `git remote get-url origin`. Verify it works non-interactively: `git clone --depth 1 <url> /tmp/test-clone && rm -rf /tmp/test-clone`.
+- **Repo name** — derive from the repo itself, not user memory. Prefer `basename "$(git rev-parse --show-toplevel)"`; if that looks generic or disagrees with the remote, fall back to the origin repo name from `git remote get-url origin`.
 - **Setup commands** — infer from lockfiles/manifests. Confirm with the user.
 
-### Auto-discover Linear project
+### Auto-init Linear project
 
-Use Linear MCP to list projects. Present the list and let the user pick. The `slugId` is what goes in WORKFLOW.md's `tracker.project_slug`.
+Do not ask the user to choose a project by hand unless there is a real ambiguity.
+
+Use the detected **repo name** as the canonical Linear project name for this repository:
+
+1. Query Linear for a project whose name exactly matches the repo name.
+2. If an exact active match exists, reuse it.
+3. If no exact match exists, create a new Linear project with that repo name.
+4. Record the returned `slugId`; it is what goes in `WORKFLOW.md` as `tracker.project_slug`.
+
+Project resolution rules:
+
+- Prefer exact name match over fuzzy search.
+- If multiple exact matches exist, prefer the non-archived one attached to the active team. Only ask the user if multiple plausible exact matches remain after filtering.
+- When creating a project, attach it to the same team Symphony will operate against.
+- After creation, treat this project as the default container for all Symphony-managed work in this repo.
+- All follow-up tickets for this repo should be created under this project unless the user explicitly requests otherwise.
+
+Use Linear MCP for this step. Example operations:
+
+```graphql
+query($name: String!) {
+  projects(filter: { name: { eq: $name } }) {
+    nodes {
+      id
+      name
+      slugId
+      state
+      teams { nodes { id key name } }
+    }
+  }
+}
+```
+
+```graphql
+mutation($input: ProjectCreateInput!) {
+  projectCreate(input: $input) {
+    success
+    project {
+      id
+      name
+      slugId
+    }
+  }
+}
+```
+
+Minimum create input:
+
+- `name`: repo name
+- `teamIds`: the active team Symphony should manage
+
+If related repo tickets already exist outside this project, move them into the resolved project before launch or call it out explicitly.
 
 ### Auto-check and create workflow states
 
-After the user picks a project, use Linear MCP to check the team's workflow states. Three custom states are required. If any are missing, create them via `curl`:
+After the Linear project is resolved, use its team to check workflow states. Three custom states are required. If any are missing, create them via `curl`:
 
 ```bash
 curl -s -X POST https://api.linear.app/graphql \
@@ -100,7 +152,7 @@ Two changes:
 
 ```yaml
 tracker:
-  project_slug: "<user's project slug>"
+  project_slug: "<repo-named Linear project slug>"
 ```
 
 ### 2. after_create hook
@@ -143,7 +195,7 @@ After pushing, verify: `git log origin/$(git branch --show-current) --oneline -1
 
 ## Pre-launch: check active tickets
 
-Before starting Symphony, use Linear MCP to list all tickets in active states (`Todo`, `In Progress`, `Rework`). **Symphony will immediately dispatch agents for every active ticket — not just new ones.**
+Before starting Symphony, use Linear MCP to list all tickets in the resolved repo project that are in active states (`Todo`, `In Progress`, `Rework`). **Symphony will immediately dispatch agents for every active ticket in that project — not just new ones.**
 
 Show the list to the user and ask if they're comfortable with all of these being worked on. Move anything they're not ready to hand off back to Backlog.
 
@@ -179,7 +231,7 @@ Once Symphony is running, help the user with their first workflows:
 The user has a big feature idea. Use Linear MCP to break it into tickets. For each ticket:
 - Clear title and description with acceptance criteria
 - Set blocking relationships where order matters
-- Assign to the Symphony project so agents can pick them up
+- Assign to the repo's Symphony project so agents can pick them up
 - Start with tickets that have no blockers in Todo
 
 ### First run
