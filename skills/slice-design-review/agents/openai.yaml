@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slice Design Review"
+  short_description: "Review slices against design baselines"
+  default_prompt: "Use $slice-design-review to review this feature slice against the current architecture baseline and engineering standards."

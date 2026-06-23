@@ -1,6 +1,6 @@
 ---
 name: blueprint-compiler
-description: Compile a Design Blueprint into a concrete, repo-aware Implementation Plan.
+description: Compile a human-facing Design Blueprint or technical design into repo-aware execution inputs, then use implementation-plan-writer to produce the Agent-facing Implementation Plan.md. Use when a Blueprint/design doc must be mapped to concrete implementation phases, repo targets, validation, and backlog draft.
 version: 0.1.0
 ---
 
@@ -10,10 +10,10 @@ version: 0.1.0
 @blueprint-compiler
 
 ## What this skill does
-- 将整体技术方案（Blueprint）“编译”为一份**可执行、可落地、与当前代码库强相关**的 Implementation Plan
-- 产出的执行方案必须**保持与 Blueprint 一致的核心思路/架构方向**，但具体任务拆分、落地路径、改动位置与依赖梳理必须以 repo 现状为准
-- 在 `Implementation Plan.md` 中明确：要改哪些模块/文件（尽量给出路径线索）、怎么分阶段推进、每阶段验收与风险/依赖/TBD
-- 在 `Implementation Plan.md` 中**直接拆分出 backlog 任务列表草案**（原子化 items + 建议 ID/验收点/依赖），可直接用于后续写入根目录 `BACKLOG.md`
+- 将人类消费的整体技术方案（Blueprint / Technical Design）“编译”为 repo-aware 的执行输入。
+- 保持与 Blueprint 一致的核心思路/架构方向，但具体任务拆分、落地路径、改动位置与依赖梳理必须以 repo 现状为准。
+- 最终的 `Implementation Plan.md` 必须由 `implementation-plan-writer` 的结构和质量标准统一生成。
+- 若输入不是成熟技术方案，而只是需求草稿，先调用/遵循 `technical-design-writer` 补齐人类可审阅的技术方案，再进入编译。
 
 ## Inputs (recommended)
 - `<blueprint-doc-path>`：Blueprint 文档在仓库内的路径（可多个；也可沿用既有命名 `<design-doc-path>`）
@@ -32,8 +32,13 @@ version: 0.1.0
 - 不臆测缺失需求：信息不足时，必须在 `Implementation Plan.md` 标注 TBD 与需要补充的资料清单。
 - 计划必须**可执行**：避免停留在抽象架构口号；需要给出明确的执行路径与拆分策略。
 - 计划必须**不背离 Blueprint**：任何偏离都必须在 `Implementation Plan.md` 明确“为何偏离 + 影响 + 替代方案”。
+- 不在本 skill 内维护 `Implementation Plan.md` 的最终模板；模板和偏好统一来自 `implementation-plan-writer`。
+- 不把技术方案和 `Implementation Plan.md` 合成一个文档：技术方案主要给人类审阅，`Implementation Plan.md` 主要给 Agent 执行。
 
 ## Allowed commands
+- `technical-design-writer`
+- `implementation-plan-writer`
+- `standing-on-giants-preflight`
 - `rg`
 - `ls`
 - `git`
@@ -50,13 +55,8 @@ version: 0.1.0
 4. 运行 standing-on-giants-preflight（找捷径/复用）
    - 调用 `standing-on-giants-preflight` skill，检索是否已有现成方案/最佳实践/可复用代码/现成工具链可直接套用。
    - 输出结论：哪些部分可以走捷径（或必须自行实现）+ 采用/不采用的理由 + 对后续分阶段交付的影响。
-5. 生成 `Implementation Plan.md`（建议结构）
-   - Background / Goals / Non-goals
-   - Blueprint alignment（核心思路对齐点）
-   - Repo reality（当前实现概览 + 关键限制）
-   - Implementation strategy（分阶段路径）
-   - Work breakdown（模块级拆分 + 任务颗粒度建议 + 依赖）
-   - Backlog draft（**直接可落盘到根目录 `BACKLOG.md` 的 items 列表**：建议使用稳定的 `<spec-name>` slug 作为 item ID，附：描述/验收点/依赖/风险）
-   - Risks & TBD（缺失上下文、决策点、风险与缓解）
-   - Test plan / Validation（每阶段验证方式）
+5. 生成 `Implementation Plan.md`
+   - 调用/遵循 `implementation-plan-writer`。
+   - 必须包含 repo context、分阶段执行计划、backlog draft、validation plan、guardrails、TBD/assumptions/risks 与 Definition of Done。
+   - Backlog draft 使用稳定 `<spec-name>` slug 作为 item ID，附描述、验收点、依赖、风险/TBD。
 

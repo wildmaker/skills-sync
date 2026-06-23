@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Cursor Debate"
+  short_description: "3 轮辩论：Codex GPT-5.4 xhigh vs Cursor Opus 4.6"
+  default_prompt: "Use $codex-cursor-debate to debate my question for 3 rounds and return both final answers plus the key differences."

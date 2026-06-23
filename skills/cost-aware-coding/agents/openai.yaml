@@ -1,0 +1,7 @@
+interface:
+  display_name: "Cost-Aware Coding"
+  short_description: "用便宜模型和子代理节约编码成本"
+  default_prompt: "Use $cost-aware-coding to complete this coding task while keeping the main context and high-tier model usage lean."
+
+policy:
+  allow_implicit_invocation: true

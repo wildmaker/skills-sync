@@ -1,0 +1,4 @@
+interface:
+  display_name: "Elon Simplification Review"
+  short_description: "Ruthless technical simplification review"
+  default_prompt: "Use $elon-simplification-review to review this technical design for deletion, simplification, and automation readiness."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Review Report"
+  short_description: "AI-triaged test review for human audit"
+  default_prompt: "Use $unit-test-report to review test quality and coverage, write an Obsidian-friendly report under docs/, highlight only the issues humans should inspect first, and add Mermaid or Canvas when the logic is complex."

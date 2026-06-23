@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan and Delegate"
+  short_description: "先生成完整 PLAN 文档，再委派给编码 Agent 实施"
+  default_prompt: "Use $plan-and-delegate to inspect the repo, write a detailed PLAN document with requirement context and technical approach, then delegate implementation to a coding-focused agent. If native delegation is unavailable, still return the saved PLAN path and a ready-to-send delegate prompt."

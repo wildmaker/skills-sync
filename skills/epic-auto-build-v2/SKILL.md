@@ -74,6 +74,7 @@ version: 0.6.1
 
 ## Allowed commands
 - `blueprint-compiler`
+- `implementation-plan-writer`
 - `backlog-generate`
 - `backlog-issue-sync`
 - `backlog-write-back`

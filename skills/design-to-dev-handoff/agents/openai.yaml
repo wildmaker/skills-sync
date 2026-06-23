@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design to Dev Handoff"
+  short_description: "Create a technical design and handoff pack for execution"
+  default_prompt: "Use $design-to-dev-handoff to analyze my requirement, gather the needed repo context, and produce a human-facing technical design summary plus a self-contained handoff package for a lower-tier agent. If a persistent Implementation Plan.md is needed, use $implementation-plan-writer for that separate Agent-facing document."

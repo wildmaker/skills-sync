@@ -10,7 +10,7 @@ version: 0.2.1
 @epic-breakdown
 
 ## What this skill does
-- 调用 `blueprint-compiler` 将 Blueprint（设计/方案）编译为 repo-aware 的 `Implementation Plan.md`
+- 调用 `blueprint-compiler` 将 Blueprint（设计/方案）编译为 repo-aware 的执行输入，并由 `implementation-plan-writer` 统一产出 Agent-facing `Implementation Plan.md`
 - 将计划拆分为根目录 `BACKLOG.md` 中一个以 `<epic-name>` 命名的 Epic 分组（items 原子化）
 - 为每个 backlog item 创建/对齐 GitHub Issue，并在需要时回写到 `BACKLOG.md`
 - 从 `<base-branch>` 创建并推送 `<epic-branch>`（默认 `epic/<epic-name>`），为后续 `spec/*` 工作流提供稳定基座
@@ -40,6 +40,7 @@ version: 0.2.1
 
 ## Allowed commands
 - `blueprint-compiler`
+- `implementation-plan-writer`
 - `backlog-generate`
 - `backlog-issue-sync`
 - `git`

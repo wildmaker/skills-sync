@@ -1,0 +1,4 @@
+interface:
+  display_name: "Peer Rethink"
+  short_description: "基于另一位工程师或 AI 的答复重新思考并更新结论"
+  default_prompt: "Use $peer-rethink. 这是另一个工程师的回复，请不要为你之前的回答辩护。先提炼对方的核心观点，再说明你同意什么、不同意什么、这改变了你什么判断，最后给出你的更新结论。"
